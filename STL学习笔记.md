@@ -1,0 +1,36 @@
+#### STL学习笔记
+
+- 配置器
+  - allocator
+    - allocate
+    - deallocate
+  - constructor
+    - construct
+    - destroy
+- 迭代器
+  - iterator
+- 仿函数
+  - functional
+  - hash_functional
+- 容器
+  - vector
+  - list
+  - deque
+  - map
+  - set
+  - unordered_map
+  - unordered_set
+  - basic_string
+- 算法
+  - 基本算法
+  - 数值算法
+  - set 算法
+  - heap 算法
+  - 其他算法
+- 配接器
+  - container adapters
+    - stack
+    - queue
+    - priority_queue
+  - iterator adapters
+    - reverse_iterator
