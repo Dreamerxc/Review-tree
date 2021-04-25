@@ -129,6 +129,8 @@ namespace MyTinySTL{
         void reallocate_insert(iterator pos, const value_type& value);
 
         iterator fill_insert(iterator pos,const size_type n, const value_type& value);
+        template <class Iter>
+        void copy_insert(iterator pos, Iter first, Iter last);
     public:
         iterator begin() noexcept
         { return begin_; }
@@ -199,6 +201,9 @@ namespace MyTinySTL{
             return *(end_ - 1);
         }
 
+        pointer data() noexcept { return begin_; }
+        const_pointer data() const noexcept { return begin_; }
+
         // 修改容器相关操作
         void assign(size_type n,const value_type& value){
             fill_assign(n, value);
@@ -233,6 +238,23 @@ namespace MyTinySTL{
         iterator insert(const_iterator pos, size_type n, const value_type& value){
             return fill_insert(const_cast<iterator>(pos), n, value);
         }
+
+        template <class Iter, typename std::enable_if<
+                MyTinySTL::is_input_iterator<Iter>::value, int>::type = 0>
+        void insert(const_iterator pos, Iter first, Iter last){
+            copy_insert(const_cast<iterator>(pos), first, last);
+        }
+
+        // erase
+        iterator erase(const_iterator pos);
+        iterator erase(const_iterator first, const_iterator second);
+
+        // clear
+        void clear() { erase(begin(), end()); }
+
+        // resize
+        void resize(size_type new_size) { return resize(new_size, value_type()); }
+        void resize(size_type new_size, const value_type& value);
         // 分配空间
         void reserve(size_type n);
 
@@ -447,6 +469,49 @@ namespace MyTinySTL{
         return begin_ + len;
     }
 
+
+    template <class T>
+    template <class Iter>
+    void vector<T>::copy_insert(iterator pos, Iter first, Iter last) {
+        if (first == last)
+            return;
+        const auto n = MyTinySTL::distance(first,last);
+        if ((cap_ - end_) >= n){
+            const auto after_pos = end_ - pos;
+            auto old_end = end_;
+            if (after_pos > n){
+                end_ = MyTinySTL::uninitialized_copy(end_ - n, end_, end_);
+                MyTinySTL::move_backward(pos, old_end - n, old_end);
+                MyTinySTL::uninitialized_copy(first, last, pos);
+            }
+            else{
+                auto mid = first;
+                MyTinySTL::advance(mid, after_pos);
+                end_ = MyTinySTL::uninitialized_copy(mid, last, end_);
+                end_ = MyTinySTL::uninitialized_move(pos, old_end, end_);
+                MyTinySTL::uninitialized_copy(first, mid, pos);
+            }
+        }
+        else{
+            const auto new_size = get_new_cap(n);
+            auto new_begin = data_allocator::allocate(new_size);
+            auto new_end = new_begin;
+            try{
+                new_end = MyTinySTL::uninitialized_move(begin_, pos, new_begin);
+                new_end = MyTinySTL::uninitialized_copy(first, last, new_end);
+                new_end = MyTinySTL::uninitialized_move(pos, end_, new_end);
+            }
+            catch (...){
+                destroy_and_recover(new_begin, new_end, new_size);
+                throw;
+            }
+            data_allocator::deallocate(begin_, cap_ - begin_);
+            begin_ = new_begin;
+            end_ = new_end;
+            cap_ = new_begin + new_size;
+        }
+    }
+
     ///////////////////////////  vector 方法函数  /////////////////////////
 
     // 当原容量小于要求大小时，才会重新分配空间
@@ -463,9 +528,17 @@ namespace MyTinySTL{
         }
     }
 
+    template <class T>
+    void vector<T>::resize(size_type new_size, const value_type& value) {
+        if (new_size < size()){
+            erase(begin() + new_size, end());
+        }
+        else{
+            insert(end(), new_size - size(), value);
+        }
+    }
 
-
-    ////////  构造函数  ////////////////////////////////
+    //////////////////////////  构造函数  ////////////////////////////////
     template <class T>
     vector<T>& vector<T>::operator= (const vector& rhs){
         if(this != &rhs){
@@ -591,5 +664,68 @@ namespace MyTinySTL{
             reallocate_insert(Iterpos, value);
         }
         return begin_ + n;
+    }
+
+    template <class T>
+    typename vector<T>::iterator
+    vector<T>::erase(const_iterator pos){
+        iterator xpos = begin_ + (pos - begin_);
+        MyTinySTL::move(xpos+1, end_, xpos);
+        data_allocator::destroy(end_ - 1);
+        --end_;
+        return xpos;
+    }
+
+    template <class T>
+    typename vector<T>::iterator
+    vector<T>::erase(const_iterator first, const_iterator last) {
+        const auto n = first - begin_;
+        iterator pos = begin_ + n;
+        data_allocator::destroy(MyTinySTL::move(pos + (last - first), end_, pos), end_);
+        end_ = end_ - (last - first);
+        return begin_ + n;
+    }
+
+    //////////////////////////  重载比较操作符  ////////////////////////////////
+    template <class T>
+    bool operator == (const vector<T>& lhs, const vector<T>& rhs){
+        return lhs.size() == rhs.size() &&
+             MyTinySTL::equal(lhs.begin(),lhs.end(),rhs.begin());
+    }
+
+    template <class T>
+    bool operator < (const vector<T>& lhs, const vector<T>& rhs){
+        return MyTinySTL::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    }
+
+    template <class T>
+    bool operator!=(const vector<T>& lhs, const vector<T>& rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    template <class T>
+    bool operator>(const vector<T>& lhs, const vector<T>& rhs)
+    {
+        return rhs < lhs;
+    }
+
+    template <class T>
+    bool operator<=(const vector<T>& lhs, const vector<T>& rhs)
+    {
+        return !(rhs < lhs);
+    }
+
+    template <class T>
+    bool operator>=(const vector<T>& lhs, const vector<T>& rhs)
+    {
+        return !(lhs < rhs);
+    }
+
+    // 重载 mystl 的 swap
+    template <class T>
+    void swap(vector<T>& lhs, vector<T>& rhs)
+    {
+        lhs.swap(rhs);
     }
 }

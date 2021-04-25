@@ -141,6 +141,7 @@ namespace MyTinySTL{
         return static_cast<typename iterator_traits<Iterator>::value_type*>(0);
     }
 
+    // 用于计算两个迭代器的距离
     template <class InputIterator>
     typename iterator_traits<InputIterator>::difference_type
     distance_dispatch(InputIterator first, InputIterator last, input_iterator_tag){
@@ -160,7 +161,7 @@ namespace MyTinySTL{
 
     template <class InputIterator>
     typename iterator_traits<InputIterator>::difference_type
-    distance_dispatch(InputIterator first, InputIterator last){
+    distance(InputIterator first, InputIterator last){
         return distance_dispatch(first,last,iterator_category(first));
     }
 
