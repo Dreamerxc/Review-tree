@@ -64,16 +64,16 @@ RM = /cygdrive/c/Users/kricsqiao/AppData/Local/JetBrains/CLion2020.2/cygwin_cmak
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL
+CMAKE_SOURCE_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/cmake-build-debug
+CMAKE_BINARY_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all:
+all: CMakeFiles/stltest.dir/all
 
 .PHONY : all
 
@@ -83,9 +83,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean:
+clean: CMakeFiles/stltest.dir/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/stltest.dir
+
+# All Build rule for target.
+CMakeFiles/stltest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles --progress-num=1,2 "Built target stltest"
+.PHONY : CMakeFiles/stltest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/stltest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/stltest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/stltest.dir/rule
+
+# Convenience name for target.
+stltest: CMakeFiles/stltest.dir/rule
+
+.PHONY : stltest
+
+# clean rule for target.
+CMakeFiles/stltest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/clean
+.PHONY : CMakeFiles/stltest.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

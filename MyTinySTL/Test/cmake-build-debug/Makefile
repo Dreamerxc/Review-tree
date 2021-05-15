@@ -68,10 +68,10 @@ RM = /cygdrive/c/Users/kricsqiao/AppData/Local/JetBrains/CLion2020.2/cygwin_cmak
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL
+CMAKE_SOURCE_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/cmake-build-debug
+CMAKE_BINARY_DIR = /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -100,9 +100,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/cmake-build-debug/CMakeFiles /cygdrive/f/Review-tree/Review-tree/MyTinySTL/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -130,6 +130,34 @@ depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+#=============================================================================
+# Target rules for targets named stltest
+
+# Build rule for target.
+stltest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 stltest
+.PHONY : stltest
+
+# fast build rule for target.
+stltest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/build
+.PHONY : stltest/fast
+
+# target to build an object file
+test.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/test.o
+.PHONY : test.o
+
+# target to preprocess a source file
+test.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/test.i
+.PHONY : test.i
+
+# target to generate assembly for a file
+test.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stltest.dir/build.make CMakeFiles/stltest.dir/test.s
+.PHONY : test.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -138,6 +166,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... stltest"
+	@echo "... test.o"
+	@echo "... test.i"
+	@echo "... test.s"
 .PHONY : help
 
 

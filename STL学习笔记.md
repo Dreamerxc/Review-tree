@@ -95,3 +95,36 @@ memcpy与memmove其实差不多，目的都是将N个字节的源内存地址的
 
 
 ##### std::addressof : 获得对象的实际地址
+
+
+
+##### is_trivially_copy_assignable ： 测试类型是否具有普通复制赋值运算符
+
+
+
+##### std::enable_if :
+
+```
+template< bool B, class T = void >
+struct enable_if;
+
+template<bool B, class T = void>
+struct enable_if {};
+  
+template<class T>
+struct enable_if<true, T> { typedef T type; };
+```
+
+只有当第一个模板参数为true时，enable_if 会包含一个 type = T的共有成员，否则没有该成员
+
+
+
+##### std::is_integral :
+
+C++ STL的std::is_integral模板用于检查给定类型是否为整数。
+
+
+
+##### std::move() :[first，last]中元素的值将传输到结果所指向的元素。调用之后，[first，last]范围内的元素处于未指定但有效的状态。
+
+OutputIterator move (InputIterator first, InputIterator last, OutputIterator result);

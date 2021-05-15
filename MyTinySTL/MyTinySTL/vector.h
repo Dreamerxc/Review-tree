@@ -61,7 +61,7 @@ namespace MyTinySTL{
 
         template<class Iter, typename std::enable_if<
                 MyTinySTL::is_input_iterator<Iter>::value, int>::type = 0>
-        vector<Iter first, Iter last>{
+        vector(Iter first, Iter last){
             range_init(first, last);
         }
 
@@ -82,7 +82,7 @@ namespace MyTinySTL{
 
         // 利用初始化列表构造
         vector(std::initializer_list<value_type > ilist){
-            range(ilist.begin(),ilist.end());
+            range_init(ilist.begin(),ilist.end());
         }
 
         vector& operator= (const vector& rhs);
@@ -266,14 +266,14 @@ namespace MyTinySTL{
     void vector<T>::try_init() {
         try{
             // 默认分配16个单位
-            begin_ = data_allocator::allocator(16);
+            begin_ = data_allocator::allocate(16);
             end_ = begin_;
             cap_ = begin_ + 16;
         }
         catch (...) {
             begin_ = nullptr;
             end_ = nullptr;
-            cap_ = nulltpr;
+            cap_ = nullptr;
         }
     }
 
@@ -296,7 +296,7 @@ namespace MyTinySTL{
     template <class T>
     void vector<T>::init_space(size_type size, value_type cap) {
         try{
-            begin_ = data_allocator::allocator(cap);
+            begin_ = data_allocator::allocate(cap);
             end_ = begin_ + size;
             cap_ = begin_ + cap;
         }

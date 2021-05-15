@@ -144,4 +144,41 @@ namespace MyTinySTL
         }
         return first1 == last1 && first2 != last2;
     }
+
+    /*****************************************************************************************/
+    // fill_n
+    // 从 first 位置开始填充 n 个值
+    /*****************************************************************************************/
+    template <class InputIterator, class size, class T>
+    InputIterator unchecked_fill_n(InputIterator first, size n, const T& value)
+    {
+        for ( ; n>0 ; --n, ++first)
+        {
+            *first = value;
+        }
+        return first;
+    }
+
+    // 为one-byte提供特化版本
+    template <class Tp, class Size, class Up>
+    typename std::enable_if<
+            std::is_integral<Tp>::value && sizeof(Tp) == 1 &&
+                    !std::is_same<Tp, bool>::value &&
+                    std::is_integral<Up>::value && sizeof(Up) == 1,
+            Tp*>::type
+     unchecked_fill_n(Tp* first, size n, Up value)
+    {
+         if (n > 0)
+         {
+             std::memset(first, (unsigned char)value, (size_t)(n));
+         }
+         return first + n;
+    }
+
+    template <class InputIterator, class size, class T>
+    InputIterator fill_n(InputIterator first, size n, const T& value)
+    {
+        return unchecked_fill_n(first, n, value);
+    }
+
 }

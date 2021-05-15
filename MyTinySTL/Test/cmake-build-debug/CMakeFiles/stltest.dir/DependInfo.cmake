@@ -4,12 +4,13 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/cygdrive/f/MyTinySTL/main.cpp" "/cygdrive/f/MyTinySTL/cmake-build-debug/CMakeFiles/MyTinySTL.dir/main.cpp.o"
+  "/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/test.cpp" "/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/stltest.dir/test.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "../../MyTinySTL"
   )
 
 # Targets to which this target links.
