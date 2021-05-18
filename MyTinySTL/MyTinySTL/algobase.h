@@ -9,7 +9,9 @@
 
 #pragma once
 #include "iterator.h"
-
+#include "util.h"
+#include <cstring>
+#include <utility>
 namespace MyTinySTL
 {
     /*****************************************************/
@@ -26,11 +28,11 @@ namespace MyTinySTL
     }
 
     // unchecked_copy_cat random_access_iterator版本
-    template <class InputIterator, class OutputIter>
-    OutputIter unchecked_copy_cat(InputIterator first, InputIterator last,
+    template <class RandomIter, class OutputIter>
+    OutputIter unchecked_copy_cat(RandomIter first, RandomIter last,
             OutputIter result, MyTinySTL::random_access_iterator_tag){
         for (auto n = last - first; n>0; --n, ++first, ++result){
-            *result = *first;
+            result = *first;
         }
         return result;
     }
@@ -72,6 +74,7 @@ namespace MyTinySTL
     }
 
     // unchecked_copy_backward_cat 的 random_access_iterator_tag 版本
+    template <class BidirectionalIter1, class BidirectionalIter2>
     BidirectionalIter2 unchecked_copy_backward_cat(BidirectionalIter1 first, BidirectionalIter1 last,
             BidirectionalIter2 result, MyTinySTL::random_access_iterator_tag){
         for (auto n = last - first; n>0;--n){
@@ -98,6 +101,7 @@ namespace MyTinySTL
         }
         return result;
     }
+
     template <class BidirectionalIter1, class BidirectionalIter2>
     BidirectionalIter2 copy_backward(BidirectionalIter1 first, BidirectionalIter1 last,
             BidirectionalIter2 result){
@@ -109,7 +113,7 @@ namespace MyTinySTL
      * 比较两个序列是否相同*/
     /************************************************************************/
     template <class InputIter1, class InputIter2>
-    bool equal(InpuIter1 first1, InputIter1 last1, InputIter2 first2){
+    bool equal(InputIter1 first1, InputIter1 last1, InputIter2 first2){
         for( ; first1 != last1;first1++,first2++){
             if (first1 != first2) return false;
         }
@@ -118,7 +122,7 @@ namespace MyTinySTL
 
     // 重载版本，使用自定义函数判断
     template <class InputIter1, class InputIter2, class Compared>
-    bool equal(InpuIter1 first1, InputIter1 last1, InputIter2 first2, Compared comp){
+    bool equal(InputIter1 first1, InputIter1 last1, InputIter2 first2, Compared comp){
         for( ; first1 != last1;first1++,first2++){
             if (!comp(*first1,*first2)) return false;
         }
@@ -126,8 +130,8 @@ namespace MyTinySTL
     }
 
     template <class InputIter1,class InputIter2>
-    bool lexicographical_compare(InputIter1 first1, InputInter1 last1,
-                                    InputIter2 first2, InputIter2 lasr2){
+    bool lexicographical_compare(InputIter1 first1, InputIter1 last1,
+                                    InputIter2 first2, InputIter2 last2){
         for( ; first1!=last1 && first2!=last2; ++first1, ++first2){
             if( *first1<*first2 ) return true;
             if( *first1>*first2 ) return false;
@@ -136,8 +140,8 @@ namespace MyTinySTL
     }
 
     template <class InputIter1,class InputIter2, class Compared>
-    bool lexicographical_compare(InputIter1 first1, InputInter1 last1,
-            InputIter2 first2, InputIter2 lasr2, Compared comp){
+    bool lexicographical_compare(InputIter1 first1, InputIter1 last1,
+            InputIter2 first2, InputIter2 last2, Compared comp){
         for( ; first1!=last1 && first2!=last2; ++first1, ++first2){
             if(comp(*first1,*first2)) return true;
             if(comp(*first2,*first1)) return false;
@@ -166,7 +170,7 @@ namespace MyTinySTL
                     !std::is_same<Tp, bool>::value &&
                     std::is_integral<Up>::value && sizeof(Up) == 1,
             Tp*>::type
-     unchecked_fill_n(Tp* first, size n, Up value)
+     unchecked_fill_n(Tp* first, Size n, Up value)
     {
          if (n > 0)
          {
@@ -181,4 +185,60 @@ namespace MyTinySTL
         return unchecked_fill_n(first, n, value);
     }
 
+    /*****************************************************************************************/
+    // copy_n
+    // 把 [first, first + n)区间上的元素拷贝到 [result, result + n)上
+    // 返回一个 pair 分别指向拷贝结束的尾部
+    /*****************************************************************************************/
+    template <class InputIter, class Size, class OutputIter>
+    std::pair<InputIter, OutputIter>
+    unchecked_copy_n(InputIter first, Size n, OutputIter result, MyTinySTL::input_iterator_tag)
+    {
+        for (; n > 0; --n, ++first, ++result)
+        {
+            *result = *first;
+        }
+        return std::pair<InputIter, OutputIter>(first, result);
+    }
+
+    template <class RandomIter, class Size, class OutputIter>
+    std::pair<RandomIter, OutputIter>
+    unchecked_copy_n(RandomIter first, Size n, OutputIter result,
+            MyTinySTL::random_access_iterator_tag)
+    {
+        auto last = first + n;
+        return std::pair<RandomIter, OutputIter>(last, MyTinySTL::copy(first, last, result));
+    }
+
+    template <class InputIter, class Size, class OutputIter>
+    std::pair<InputIter, OutputIter>
+    copy_n(InputIter first, Size n, OutputIter result)
+    {
+        return unchecked_copy_n(first, n, result, iterator_category(first));
+    }
+
+    /*****************************************************************************************/
+    // fill
+    // 为 [first, last)区间内的所有元素填充新值
+    /*****************************************************************************************/
+    template <class ForwardIter, class T>
+    void fill_cat(ForwardIter first, ForwardIter last, const T& value,
+                              MyTinySTL::forward_iterator_tag)
+    {
+        for (; first != last ; ++first) {
+            *first = value;
+        }
+    }
+
+    template <class ForwardIter, class T>
+    void fill_cat(ForwardIter first, ForwardIter last, const T& value,
+            MyTinySTL::random_access_iterator_tag)
+    {
+        fill_n(first, last - first, value);
+    }
+
+    template <class ForwardIter, class T>
+    void fill(ForwardIter first, ForwardIter last, const T& value) {
+        fill_cat(first, last, value, iterator_category(first));
+    }
 }

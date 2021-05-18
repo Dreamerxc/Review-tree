@@ -100,7 +100,7 @@ namespace MyTinySTL{
     struct has_iterator_cat_of<T, U, false> : public m_false_type {};
 
     template <class Iter>
-    struct is_input_iterator : public has_iterator_cat_of<Iter, output_iterator_tag> {};
+    struct is_input_iterator : public has_iterator_cat_of<Iter, input_iterator_tag> {};
 
     template <class Iter>
     struct is_out_iterator : public has_iterator_cat_of<Iter, output_iterator_tag> {};
@@ -123,7 +123,7 @@ namespace MyTinySTL{
     template <class Iterator>
     typename iterator_traits<Iterator>::iterator_category
     iterator_category(const Iterator&){
-        typename typename iterator_traits<Iterator>::iterator_category Category;
+        typedef typename iterator_traits<Iterator>::iterator_category Category;
         return Category();
     }
 
@@ -188,11 +188,10 @@ namespace MyTinySTL{
         Iter += n;
     }
 
-    tempalte <class InputIterator, class Distance>
-     void advance(InputIterator& Iter, Distance n){
+    template <class InputIterator, class Distance>
+     void advance(InputIterator& Iter, Distance n) {
          advance_dispatch(Iter, n, iterator_category(Iter));
      }
-
 
 
 

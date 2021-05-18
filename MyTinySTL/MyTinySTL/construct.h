@@ -12,7 +12,7 @@
 
 #include "type_traits.h"
 #include "iterator.h"
-
+#include "util.h"
 namespace MyTinySTL
 {
 
@@ -56,12 +56,12 @@ namespace MyTinySTL
 
     template <class T>
     void destroy(T* pointer){
-        destroy_one(pointer, std::is_trivially_destructible<T>{})
+        destroy_one(pointer, std::is_trivially_destructible<T>{});
     }
 
     template <class ForwardIter>
     void destroy(ForwardIter first, ForwardIter last){
         destroy_cat(first, last, std::is_trivially_destructible<
-                typename iterator_traits<ForwardIter>::value_type>{})
+                typename iterator_traits<ForwardIter>::value_type>{});
     }
 }

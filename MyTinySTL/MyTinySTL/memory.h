@@ -15,6 +15,7 @@
 #include "allocator.h"
 #include "construct.h"
 #include "uninitialized.h"
+#include "util.h"
 #pragma once
 
 namespace MyTinySTL
@@ -26,7 +27,7 @@ namespace MyTinySTL
     }
 
     // 获取 、 释放 临时缓冲区
-    template <class t>
+    template <class T>
     pair<T*, ptrdiff_t> get_buffer_helper(ptrdiff_t len, T*)
     {
         if (len > static_cast<ptrdiff_t>(INT_MAX / sizeof(T)))
@@ -78,7 +79,7 @@ namespace MyTinySTL
     public:
         ptrdiff_t  size()  const noexcept { return len; };
         ptrdiff_t  requested_size() const noexcept { return original_size; };
-        T*         begin() noexcept { return buffer };
+        T*         begin() noexcept { return buffer; };
         T*         end()   noexcept { return buffer + len; };
     };
 

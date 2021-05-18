@@ -85,6 +85,9 @@
 		<Unit filename="/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/test.cpp">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="/cygdrive/f/Review-tree/Review-tree/MyTinySTL/Test/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

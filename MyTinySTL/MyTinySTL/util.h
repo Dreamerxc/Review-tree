@@ -30,4 +30,27 @@ namespace MyTinySTL
     T&& forward(typename std::remove_reference<T>::type&& arg) noexcept{
         return static_cast<T&&>(arg);
     }
+
+    template <class T>
+    void swap(T& lhs, T& rhs)
+    {
+        auto tmp(MyTinySTL::move(lhs));
+        lhs = MyTinySTL::move(rhs);
+        rhs = MyTinySTL::move(tmp);
+    }
+
+    // pair 模板
+    template <class Ty1, class Ty2>
+    struct pair
+    {
+            typedef Ty1 first_type;
+            typedef Ty2 second_type;
+
+            first_type first;
+            second_type second;
+        template <class T1, class T2>
+        pair(T1& other1, T2& other2) : first(other1), second(other2){}
+
+    };
+
 }

@@ -9,6 +9,7 @@
 
 #pragma once
 #include<initializer_list>
+#include<algorithm>
 #include "iterator.h"
 #include "memory.h"
 #include "util.h"
@@ -23,18 +24,18 @@ namespace MyTinySTL{
         typedef MyTinySTL::allocator<T> allocator_type;
         typedef MyTinySTL::allocator<T> data_allocator;
 
-        typedef typename allocator_type::value_type value_type;
-        typedef typename allocator_type::pointer pointer;
-        typedef typename allocator_type::const_pointer const_pointer;
-        typedef typename allocator_type::reference reference;
-        typedef typename allocator_type::const_ference const_ference;
-        typedef typename allocator_type::size_type size_type;
-        typedef typename allocator_type::difference_type difference_type;
+        typedef typename allocator_type::value_type        value_type;
+        typedef typename allocator_type::pointer           pointer;
+        typedef typename allocator_type::const_pointer     const_pointer;
+        typedef typename allocator_type::reference         reference;
+        typedef typename allocator_type::const_reference     const_reference;
+        typedef typename allocator_type::size_type         size_type;
+        typedef typename allocator_type::difference_type   difference_type;
 
         typedef value_type* iterator;
         typedef const value_type* const_iterator;
-        typedef MyTinySTL::reverse_iterator<iterator> reverse_iterator;
-        typedef MyTinySTL::reverse_iterator<const_iterator const_iterator;
+        typedef MyTinySTL::reverse_iterator<iterator>       reverse_iterator;
+        typedef MyTinySTL::reverse_iterator<const_iterator> const_reverse_iterator;
 
         allocator_type get_allocator() {
             return data_allocator();
@@ -88,7 +89,7 @@ namespace MyTinySTL{
         vector& operator= (const vector& rhs);
         vector& operator= (vector&& rhs) noexcept;
 
-        vector& operator= (std::initialize_list<value_type > ilist){
+        vector& operator= (std::initializer_list<value_type > ilist){
             vector tmp(ilist.begin(), ilist.end());
             swap(tmp);
             return *this;
@@ -161,7 +162,7 @@ namespace MyTinySTL{
 
         // 容量相关操作
         bool  empty()  const noexcept
-        { return begin_ == end_};
+        { return begin_ == end_; };
         size_type size() const noexcept
         { return static_cast<size_type> (end_ - begin_);};
         size_type max_size() const noexcept
@@ -173,7 +174,7 @@ namespace MyTinySTL{
             return *(begin_ + n);
         }
 
-        const_ference operator[] (size_type n) const{
+        const_reference operator[] (size_type n) const{
             return *(begin_ + n);
         }
 
@@ -181,7 +182,7 @@ namespace MyTinySTL{
             return (*this)[n];
         }
 
-        const_ference at(size_type n) const{
+        const_reference at(size_type n) const{
             return (*this)[n];
         }
 
@@ -227,7 +228,7 @@ namespace MyTinySTL{
 
         void push_back(const value_type& value);
         void push_back(value_type&& value)
-        { emplace_back(MyTinySTL::move(value))};
+        { emplace_back(MyTinySTL::move(value)); };
 
         void pop_back();
 
@@ -279,7 +280,7 @@ namespace MyTinySTL{
 
     template <class T>
     void vector<T>::fill_init(size_type n,const value_type& value){
-        const size_type init_size = MyTinySTL::max(static_cast<size_type>(16),n);
+        const size_type init_size = std::max(static_cast<size_type>(16),n);
         init_space(n,init_size);
         MyTinySTL::uninitialized_fill_n(begin_,n,value);
     }
@@ -287,7 +288,7 @@ namespace MyTinySTL{
     template <class T>
     template <class Iter>
     void vector<T>::range_init(Iter first, Iter last){
-        const size_type init_size = MyTinySTL::max(static_cast<size_type>(last-first),
+        const size_type init_size = max(static_cast<size_type>(last-first),
                                                    static_cast<size_type>(16));
         init_space(static_cast<size_type>(last - first), init_size);
         MyTinySTL::uninitialized_copy(first, last, begin_);
@@ -347,9 +348,9 @@ namespace MyTinySTL{
     template <class T>
     template <class FIter>
     void vector<T>::copy_assign(FIter first, FIter last, forward_iterator_tag) {
-        const size_tyep len = MyTinySTL::distance(first, last);
+        const size_type len = MyTinySTL::distance(first, last);
         if (len > capacity()){
-            vector tmp(first, second);
+            vector tmp(first, last);
             swap(tmp);
         }
         else if (size() > len){
@@ -375,8 +376,8 @@ namespace MyTinySTL{
             ? old_size + add_size : old_size + add_size + 16;
         }
         const size_type new_size = old_size == 0
-                ? MyTinySTL::max(add_size,static_cast<size_type>(16))
-                : MyTinySTL::max(old_size + old_size/2, old_size + add_size);
+                ? max(add_size,static_cast<size_type>(16))
+                : max(old_size + old_size/2, old_size + add_size);
         return new_size;
     }
 
@@ -438,7 +439,7 @@ namespace MyTinySTL{
             if (after_pos > n){
                 MyTinySTL::uninitialized_copy(end_ - n, end_, end_);
                 end_ += n;
-                MyTinySTL::move_backward(pos, old_end - n, old_end);
+                MyTinySTL::copy_backward(pos, old_end - n, old_end);
                 MyTinySTL::uninitialized_fill_n(pos, n, value_copy);
             }
             else{
@@ -481,7 +482,7 @@ namespace MyTinySTL{
             auto old_end = end_;
             if (after_pos > n){
                 end_ = MyTinySTL::uninitialized_copy(end_ - n, end_, end_);
-                MyTinySTL::move_backward(pos, old_end - n, old_end);
+                MyTinySTL::copy_backward(pos, old_end - n, old_end);
                 MyTinySTL::uninitialized_copy(first, last, pos);
             }
             else{
@@ -555,7 +556,7 @@ namespace MyTinySTL{
             }
             else{
                 MyTinySTL::copy(rhs.begin(), rhs.begin() + size(), begin_);
-                MyTinySTL::unintitialized_copy(rhs.begin() + size(),rhs.end(), end_);
+                MyTinySTL::uninitialized_copy(rhs.begin() + size(),rhs.end(), end_);
                 cap_ = end_ = begin_ + len;
             }
         }
@@ -590,9 +591,9 @@ namespace MyTinySTL{
     typename vector<T>::iterator
     vector<T>::emplace(const_iterator pos, Args&& ...args){
         iterator Iterpos = static_cast<iterator>(pos);
-        const size_type = Iterpos - begin_;
+        const size_type n = Iterpos - begin_;
         if (end_ != cap_ && Iterpos == end_){
-            data_allocator::construct(MyTinySTL::addres_of(*end_), MyTinySTL::forward<Args>(args)...);
+            data_allocator::construct(MyTinySTL::address_of(*end_), MyTinySTL::forward<Args>(args)...);
             ++end_;
         }
         else if (end_ != cap_){
@@ -613,7 +614,7 @@ namespace MyTinySTL{
     template <class ...Args>
     void vector<T>::emplace_back(Args&& ...args) {
         if (end_ < cap_){
-            data_allocator::construct(mystl::address_of(*end_), mystl::forward<Args>(args)...);
+            data_allocator::construct(MyTinySTL::address_of(*end_), MyTinySTL::forward<Args>(args)...);
             end_++;
         }
         else{
