@@ -38,7 +38,7 @@ namespace MyTinySTL {
         return MyTinySTL::unchecked_uninit_copy(first, last, result,
                                 std::is_trivially_copy_assignable<
                                 typename iterator_traits<InputIter>::
-                                value_type>{}); )
+                                value_type>{});
     }
 
     /*****************************************************************************************/
@@ -47,9 +47,9 @@ namespace MyTinySTL {
     /*****************************************************************************************/
     template <class InputIter, class size, class ForwardIter>
     ForwardIter unchecked_uninit_copy_n(InputIter first, size n,
-                    ForwardIter  value, std::true_type)
+                    ForwardIter value, std::true_type)
     {
-        return MyTinySTL::copy_n(first, last, value);
+        return MyTinySTL::copy_n(first, n, value).second;
     }
 
     template <class InputIter, class size, class ForwardIter>
@@ -87,7 +87,7 @@ namespace MyTinySTL {
     ForwardIter
     unchecked_uninit_move(InputIter first, InputIter last, ForwardIter result, std::true_type)
     {
-        return mystl::move(first, last, result);
+        return MyTinySTL::move(first, last, result);
     }
 
     template <class InputIter, class ForwardIter>
@@ -99,12 +99,12 @@ namespace MyTinySTL {
         {
             for (; first != last; ++first, ++cur)
             {
-                mystl::construct(&*cur, mystl::move(*first));
+                MyTinySTL::construct(&*cur, MyTinySTL::move(*first));
             }
         }
         catch (...)
         {
-            mystl::destroy(result, cur);
+            MyTinySTL::destroy(result, cur);
         }
         return cur;
     }
@@ -112,7 +112,7 @@ namespace MyTinySTL {
     template <class InputIter, class ForwardIter>
     ForwardIter uninitialized_move(InputIter first, InputIter last, ForwardIter result)
     {
-        return mystl::unchecked_uninit_move(first, last, result,
+        return MyTinySTL::unchecked_uninit_move(first, last, result,
                 std::is_trivially_move_assignable<
                         typename iterator_traits<InputIter>::
                         value_type>{});
