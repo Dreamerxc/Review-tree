@@ -45,37 +45,37 @@ namespace MyTinySTL {
     // uninitialized_copy_n
     // 把 [first, first + n) 上的内容复制到以 result 为起始处的空间，返回复制结束的位置
     /*****************************************************************************************/
-    template <class InputIter, class size, class ForwardIter>
-    ForwardIter unchecked_uninit_copy_n(InputIter first, size n,
-                    ForwardIter value, std::true_type)
+    template <class ForwardIter, class size, class T>
+    ForwardIter unchecked_uninit_copy_n(ForwardIter first, size n,
+                    const T& value, std::true_type)
     {
-        return MyTinySTL::copy_n(first, n, value).second;
+        return MyTinySTL::fill_n(first, n, value);
     }
 
-    template <class InputIter, class size, class ForwardIter>
-    ForwardIter unchecked_uninit_copy_n(InputIter first, size n,
-            ForwardIter value, std::false_type)
+    template <class ForwardIter, class size, class T>
+    ForwardIter unchecked_uninit_copy_n(ForwardIter first, size n,
+                   const T& value, std::false_type)
     {
-        ForwardIter cur = value;
+        ForwardIter cur = first;
         try {
-            for (; n>0 ; --n, ++cur, ++value) {
-                MyTinySTL::construct(&*cur, *first);
+            for (; n>0 ; --n, ++cur) {
+                MyTinySTL::construct(&*cur, value);
             }
         }
         catch (...) {
-            for ( ; cur!=value; ++cur){
-                MyTinySTL::destroy(&*cur);
+            for ( ; first!=cur; ++first){
+                MyTinySTL::destroy(&*first);
             }
         }
         return cur;
     }
 
-    template <class InputIter, class size, class ForwardIter>
-    ForwardIter uninitialized_fill_n(InputIter first, size n, ForwardIter value)
+    template <class ForwardIter, class size, class T>
+    ForwardIter uninitialized_fill_n(ForwardIter first, size n, const T& value)
     {
         return MyTinySTL::unchecked_uninit_copy_n(first, n, value,
                                                     std::is_trivially_copy_assignable<
-                                                    typename iterator_traits<InputIter>::
+                                                    typename iterator_traits<ForwardIter>::
                                                             value_type>{});
     }
 

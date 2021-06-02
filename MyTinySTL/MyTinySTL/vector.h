@@ -288,7 +288,7 @@ namespace MyTinySTL{
     template <class T>
     template <class Iter>
     void vector<T>::range_init(Iter first, Iter last){
-        const size_type init_size = max(static_cast<size_type>(last-first),
+        const size_type init_size = std::max(static_cast<size_type>(last-first),
                                                    static_cast<size_type>(16));
         init_space(static_cast<size_type>(last - first), init_size);
         MyTinySTL::uninitialized_copy(first, last, begin_);
@@ -376,8 +376,8 @@ namespace MyTinySTL{
             ? old_size + add_size : old_size + add_size + 16;
         }
         const size_type new_size = old_size == 0
-                ? max(add_size,static_cast<size_type>(16))
-                : max(old_size + old_size/2, old_size + add_size);
+                ? std::max(add_size,static_cast<size_type>(16))
+                : std::max(old_size + old_size/2, old_size + add_size);
         return new_size;
     }
 
@@ -590,7 +590,7 @@ namespace MyTinySTL{
     template <class ...Args>
     typename vector<T>::iterator
     vector<T>::emplace(const_iterator pos, Args&& ...args){
-        iterator Iterpos = static_cast<iterator>(pos);
+        iterator Iterpos = const_cast<iterator>(pos);
         const size_type n = Iterpos - begin_;
         if (end_ != cap_ && Iterpos == end_){
             data_allocator::construct(MyTinySTL::address_of(*end_), MyTinySTL::forward<Args>(args)...);
@@ -602,6 +602,7 @@ namespace MyTinySTL{
             ++ new_end;
             MyTinySTL::copy_backward(Iterpos, end_ - 1, end_);
             *Iterpos = value_type(MyTinySTL::forward<Args>(args)...);
+            end_ = new_end;
         }
         else{
             reallocate_emplace(Iterpos, MyTinySTL::forward<Args>(args)...);
@@ -637,7 +638,7 @@ namespace MyTinySTL{
     template <class T>
     void vector<T>::pop_back() {
         if (begin_ != end_){
-            data_allocator::destory(end_ - 1);
+            data_allocator::destroy(end_ - 1);
             --end_;
         }
     }

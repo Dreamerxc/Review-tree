@@ -1,4 +1,4 @@
-ToolSet: 2.10.0 (local)@D:\cygwin64\cygwin64
+ToolSet: w64 6.0 (local)@D:\QT\Tools\mingw730_64
 Options: 
 
 Options:
