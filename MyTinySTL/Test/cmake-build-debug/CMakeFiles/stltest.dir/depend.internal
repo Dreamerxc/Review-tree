@@ -5,12 +5,16 @@ CMakeFiles/stltest.dir/test.obj
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/algobase.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/allocator.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/construct.h
+ D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/deque.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
+ D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/list.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/memory.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/type_traits.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/uninitialized.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/util.h
  D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/vector.h
+ D:/final fighting/Review-tree/MyTinySTL/Test/deque_test.h
+ D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h
  D:/final fighting/Review-tree/MyTinySTL/Test/test.cpp
  D:/final fighting/Review-tree/MyTinySTL/Test/test.h
  D:/final fighting/Review-tree/MyTinySTL/Test/vector_test.h

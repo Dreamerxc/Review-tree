@@ -82,6 +82,18 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/deque.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/list.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/deque_test.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/test.cpp">
 			<Option target="stltest"/>
 		</Unit>

@@ -10,8 +10,9 @@
 #pragma once
 #include "type_traits.h"
 #include "iterator.h"
-namespace MyTinySTL {
+#include "algobase.h"
 
+namespace MyTinySTL {
     /*****************************************************************************************/
     // uninitialized_copy
     // 把 [first, last) 上的内容复制到以 result 为起始处的空间，返回复制结束的位置
@@ -40,20 +41,19 @@ namespace MyTinySTL {
                                 typename iterator_traits<InputIter>::
                                 value_type>{});
     }
-
     /*****************************************************************************************/
-    // uninitialized_copy_n
-    // 把 [first, first + n) 上的内容复制到以 result 为起始处的空间，返回复制结束的位置
+    // uninitialized_fill_n
+    // 把 [first, first + n) 区间内填充元素值
     /*****************************************************************************************/
     template <class ForwardIter, class size, class T>
-    ForwardIter unchecked_uninit_copy_n(ForwardIter first, size n,
+    ForwardIter unchecked_uninit_fill_n(ForwardIter first, size n,
                     const T& value, std::true_type)
     {
         return MyTinySTL::fill_n(first, n, value);
     }
 
     template <class ForwardIter, class size, class T>
-    ForwardIter unchecked_uninit_copy_n(ForwardIter first, size n,
+    ForwardIter unchecked_uninit_fill_n(ForwardIter first, size n,
                    const T& value, std::false_type)
     {
         ForwardIter cur = first;
@@ -73,10 +73,49 @@ namespace MyTinySTL {
     template <class ForwardIter, class size, class T>
     ForwardIter uninitialized_fill_n(ForwardIter first, size n, const T& value)
     {
-        return MyTinySTL::unchecked_uninit_copy_n(first, n, value,
+        return MyTinySTL::unchecked_uninit_fill_n(first, n, value,
                                                     std::is_trivially_copy_assignable<
                                                     typename iterator_traits<ForwardIter>::
                                                             value_type>{});
+    }
+
+    /*****************************************************************************************/
+    // uninitialized_fill
+    // 在 [first, last) 区间内填充元素值
+    /*****************************************************************************************/
+    template <class ForwardIter, class T>
+    void
+    unchecked_uninit_fill(ForwardIter first, ForwardIter last, const T& value, std::true_type)
+    {
+        MyTinySTL::fill(first, last, value);
+    }
+
+    template <class ForwardIter, class T>
+    void
+    unchecked_uninit_fill(ForwardIter first, ForwardIter last, const T& value, std::false_type)
+    {
+        auto cur = first;
+        try
+        {
+            for (; cur != last; ++cur)
+            {
+                MyTinySTL::construct(&*cur, value);
+            }
+        }
+        catch (...)
+        {
+            for (;first != cur; ++first)
+                MyTinySTL::destroy(&*first);
+        }
+    }
+
+    template <class ForwardIter, class T>
+    void  uninitialized_fill(ForwardIter first, ForwardIter last, const T& value)
+    {
+        MyTinySTL::unchecked_uninit_fill(first, last, value,
+                                     std::is_trivially_copy_assignable<
+                                             typename iterator_traits<ForwardIter>::
+                                             value_type>{});
     }
 
     /*****************************************************************************************/

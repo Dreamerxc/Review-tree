@@ -39,6 +39,16 @@ namespace MyTinySTL
         rhs = MyTinySTL::move(tmp);
     }
 
+    template <class T>
+    const T& max(const T& a, const T& b) {
+        return a > b ? a : b;
+    }
+
+    template <class T>
+    T& min(const T& a, const T& b) {
+        return a < b ? a : b;
+    }
+
     // pair 模板
     template <class Ty1, class Ty2>
     struct pair

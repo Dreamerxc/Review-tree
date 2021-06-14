@@ -32,7 +32,7 @@ namespace MyTinySTL
     OutputIter unchecked_copy_cat(RandomIter first, RandomIter last,
             OutputIter result, MyTinySTL::random_access_iterator_tag){
         for (auto n = last - first; n>0; --n, ++first, ++result){
-            result = *first;
+            *result = *first;
         }
         return result;
     }

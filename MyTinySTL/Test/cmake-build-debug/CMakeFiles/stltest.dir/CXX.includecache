@@ -32,11 +32,31 @@ D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
 util.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/util.h
 
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/deque.h
+initializer_list
+-
+iterator.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
+allocator.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/allocator.h
+uninitialized.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/uninitialized.h
+
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
 cstddef
 -
 type_traits.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/type_traits.h
+
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/list.h
+util.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/util.h
+iterator.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
+allocator.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/allocator.h
+memory.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/memory.h
 
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/memory.h
 cstddef
@@ -65,6 +85,8 @@ type_traits.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/type_traits.h
 iterator.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
+algobase.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/algobase.h
 
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/util.h
 cstddef
@@ -86,9 +108,25 @@ D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/util.h
 algobase.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/algobase.h
 
+D:/final fighting/Review-tree/MyTinySTL/Test/deque_test.h
+../MyTinySTL/deque.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/deque.h
+test.h
+D:/final fighting/Review-tree/MyTinySTL/Test/test.h
+
+D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h
+../MyTinySTL/list.h
+D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/list.h
+test.h
+D:/final fighting/Review-tree/MyTinySTL/Test/test.h
+
 D:/final fighting/Review-tree/MyTinySTL/Test/test.cpp
 vector_test.h
 D:/final fighting/Review-tree/MyTinySTL/Test/vector_test.h
+list_test.h
+D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h
+deque_test.h
+D:/final fighting/Review-tree/MyTinySTL/Test/deque_test.h
 
 D:/final fighting/Review-tree/MyTinySTL/Test/test.h
 ctime

@@ -85,5 +85,22 @@ namespace MyTinySTL
     }                                    \
     std::cout<<std::endl;                \
 }
+
+#define Print_List(t,v) {                  \
+    std::cout<< t << #v << ":";                  \
+    for (auto x : v) {                   \
+       std::cout<< x << " ";             \
+    }                                    \
+    std::cout<<std::endl;               \
+}
+
+#define Print(t,v) {                  \
+    std::cout<< t << #v << ":";                  \
+    for (auto x : v) {                   \
+       std::cout<< x << " ";             \
+    }                                    \
+    std::cout<<std::endl;               \
+}
     }
 }
+
