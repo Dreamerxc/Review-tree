@@ -278,6 +278,22 @@ namespace MyTinySTL
             const_reference back() const
             { return *(--end()); }
 
+            reference operator[](size_type n) {
+                return _begin[n];
+            }
+
+            const_reference operator[](size_type n) const{
+                return _begin[n];
+            }
+
+            reference at(size_type n) {
+                return (*this)[n];
+            }
+
+            const_reference at(size_type n) const{
+                return (*this)[n];
+            }
+
         private:
             void fill_init(size_type n, const value_type& val);
             void create_map_and_nodes(size_type n);
@@ -887,5 +903,36 @@ namespace MyTinySTL
                 data_allocator::destroy(_end.cur);
                 destroy_buffers(_end.node + 1, _end.node + 1);
             }
+        }
+
+        template <class T>
+        bool operator==(const deque<T>& lhs, const deque<T>& rhs) {
+            return lhs.size() == rhs.size() &&
+            MyTinySTL::equal(lhs.begin(), lhs.end(), rhs.begin());
+        }
+
+        template <class T>
+        bool operator<(const deque<T>& lhs, const deque<T>& rhs) {
+            return MyTinySTL::lexicographical_compare(lhs.begin(),
+                    lhs.end(), rhs.begin(), rhs.end());
+        }
+
+        template <class T>
+        bool operator!=(const deque<T>& lhs, const deque<T>& rhs) {
+            return !(lhs == rhs);
+        }
+
+        template <class T>
+        bool operator>(const deque<T>& lhs, const deque<T>& rhs) {
+            return rhs < lhs;
+        }
+        template <class T>
+        bool operator>=(const deque<T>& lhs, const deque<T>& rhs) {
+            return !(lhs < rhs);
+        }
+
+        template <class T>
+        bool operator<=(const deque<T>& lhs, const deque<T>& rhs) {
+            return !(lhs > rhs);
         }
 }
