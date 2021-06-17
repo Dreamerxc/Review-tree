@@ -91,6 +91,9 @@
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/queue.h">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/rb_tree.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/stack.h">
 			<Option target="stltest"/>
 		</Unit>
