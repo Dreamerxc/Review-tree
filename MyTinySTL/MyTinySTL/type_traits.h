@@ -22,4 +22,16 @@ namespace MyTinySTL{
 
     typedef m_bool_constant<true> m_true_type;
     typedef m_bool_constant<false> m_false_type;
+
+
+
+    // pair traits
+    template <class T1, class T2>
+    struct pair;
+
+    template <class T>
+    struct is_pair : MyTinySTL::m_false_type {};
+
+    template <class T1, class T2>
+    struct is_pair<MyTinySTL::pair<T1, T2>>: MyTinySTL::m_true_type {};
 }
