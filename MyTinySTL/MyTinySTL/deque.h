@@ -46,7 +46,7 @@ namespace MyTinySTL
 
         deque_iterator() : first(nullptr), cur(nullptr), last(nullptr), node(nullptr) {}
 
-        deque_iterator(value_type v, map_pointer u) :
+        deque_iterator(value_pointer v, map_pointer u) :
         first(*u), cur(v), last(*u + _buf_size()), node(u) {}
 
         deque_iterator(const iterator &qu) :
@@ -149,24 +149,24 @@ namespace MyTinySTL
             return *(*this + n);
         }
 
-        bool operator==(const iterator &rhs) { return cur == rhs.cur; }
+        bool operator==(const iterator &rhs) const{ return cur == rhs.cur; }
 
-        bool operator!=(const iterator &rhs) { return cur != rhs.cur; }
+        bool operator!=(const iterator &rhs) const { return cur != rhs.cur; }
 
-        bool operator>(const iterator &rhs) {
+        bool operator>(const iterator &rhs) const {
             return node == rhs.node ? (cur > rhs.cur) : (node > rhs.node);
         }
 
-        bool operator<(const iterator &rhs) {
+        bool operator<(const iterator &rhs) const{
             return rhs > *this;
         }
 
-        bool operator<=(const iterator &rhs) {
+        bool operator<=(const iterator &rhs) const{
             return !(*this > rhs.node);
         }
 
-        bool operator>=(const iterator &rhs) {
-            return !(rhs.node > *this);
+        bool operator>=(const iterator &rhs) const{
+            return !(rhs > *this);
         }
     };
 
@@ -212,8 +212,7 @@ namespace MyTinySTL
             deque(Iter first, Iter last)
             { copy_init(first, last, iterator_category(first)); }
             deque(const deque& rhs)
-            { std::cout << "fuzhi" << std::endl;
-                copy_init(rhs.begin(), rhs.end(), iterator_category(rhs.begin())); }
+            { copy_init(rhs.begin(), rhs.end(), iterator_category(rhs.begin())); }
             deque(std::initializer_list<value_type > ilist)
             { copy_init(ilist.begin(), ilist.end(), iterator_category(ilist.begin())); }
             deque(deque&& rhs) :
@@ -297,7 +296,8 @@ namespace MyTinySTL
         private:
             void fill_init(size_type n, const value_type& val);
             void create_map_and_nodes(size_type n);
-            void create_buffer(map_pointer nstart, map_pointer nfinish)
+            void create_buffer(map_pointer nstart, map_pointer nfinish);
+            map_pointer create_map(size_type size);
             template <class Iter>
             void copy_init(Iter first, Iter last, input_iterator_tag);
             template <class Iter>
@@ -306,13 +306,11 @@ namespace MyTinySTL
             void swap(const deque& rhs);
 
             iterator insert_aux(iterator pos, const value_type& value);
-
+            void insert_aux_n(iterator pos, size_type n, const value_type& value);
             void require_capacity(size_type n, bool front);
 
             void realloc_at_front(size_type n);
             void realloc_at_back(size_type n);
-
-            void insert_aux_n(iterator pos, size_type n, const value_type& value);
 
             template <class Iter>
             void insert_dispatch(iterator pos, Iter first, Iter last);
@@ -342,18 +340,19 @@ namespace MyTinySTL
 
             iterator insert(iterator pos, const value_type& value);
             iterator insert(iterator pos, value_type&& value);
-            iterator insert(iterator pos, size_type n, const value_type& value);
+            void insert(iterator pos, size_type n, const value_type& value);
             template <class Iter, typename std::enable_if<
                     MyTinySTL::is_input_iterator<Iter>::value, int>::type = 0>
-            iterator insert(iterator pos, Iter first, Iter last);
+            void insert(iterator pos, Iter first, Iter last)
+            { insert_dispatch(pos, first, last); }
 
             void assign(size_type n, const value_type& value);
             template <class Iter, typename std::enable_if<
-                    MyTinySTL::is_input_iterator<IIter>::value, int>::type = 0>
+                    MyTinySTL::is_input_iterator<Iter>::value, int>::type = 0>
             void assign(Iter first, Iter last)
             { copy_assign(first, last); }
             void assign(std::initializer_list<value_type > ilist)
-            { copy_assign(ilist.begin(), ilist.edn()); }
+            { copy_assign(ilist.begin(), ilist.end()); }
 
             void pop_front();
             void pop_back();
@@ -379,7 +378,7 @@ namespace MyTinySTL
             _size = MyTinySTL::max(static_cast<size_type>(DEQUE_MAP_INIT_SIZE), num_nodes + 2);   // 前后各预留一个缓冲区，扩充时可用
 
             try {
-                _map = map_allocator::allocate(_size);
+                _map = create_map(_size);
             }
             catch(...) {
                 _map = nullptr;
@@ -439,7 +438,7 @@ namespace MyTinySTL
         void deque<T>::realloc_at_front(size_type n) {
             const auto new_map_size = MyTinySTL::max(_size << 1,
                                           static_cast<size_type>(_size + n + DEQUE_MAP_INIT_SIZE));
-            map_pointer new_map = create_map_and_nodes(new_map_size);
+            map_pointer new_map = create_map(new_map_size);
 
             size_type old_map_buffers = _end.node - _begin.node + 1;
             size_type new_map_buffers = old_map_buffers + n;
@@ -456,14 +455,14 @@ namespace MyTinySTL
             _map = new_map;
             _size = new_map_size;
             _begin = iterator(*mid + (_begin.cur - _begin.first), mid);
-            _end = iterator((*(end - 1) + (_end.cur - _end.first), end - 1));
+            _end = iterator(*(end - 1) + (_end.cur - _end.first), end - 1);
         }
 
         template <class T>
         void deque<T>::realloc_at_back(size_type n) {
             const auto new_map_size = MyTinySTL::max(_size << 1,
                                                      static_cast<size_type>(_size + n + DEQUE_MAP_INIT_SIZE));
-            map_pointer new_map = create_map_and_nodes(new_map_size);
+            map_pointer new_map = create_map(new_map_size);
 
             size_type old_map_buffers = _end.node - _begin.node + 1;
             size_type new_map_buffers = old_map_buffers + n;
@@ -480,11 +479,11 @@ namespace MyTinySTL
             _map = new_map;
             _size = new_map_size;
             _begin = iterator(*begin + (_begin.cur - _begin.first), begin);
-            _end = iterator((*(mid - 1) + (_end.cur - _end.first), mid - 1));
+            _end = iterator(*(mid - 1) + (_end.cur - _end.first), mid - 1);
         }
 
         template <class T>
-        vodi deque<T>::insert_aux_n(iterator pos, size_type n, const value_type &value) {
+        void deque<T>::insert_aux_n(iterator pos, size_type n, const value_type &value) {
             const size_type front_elems = pos - _begin;
             const size_type back_elems = _end - pos;
             const size_type len = size();
@@ -502,10 +501,9 @@ namespace MyTinySTL
                 }
                 else {
                     auto end2 = MyTinySTL::uninitialized_copy(old_begin, pos, new_begin);
-                    MyTinySTL::uninitialized_fill_n(end2, old_begin, value);
+                    MyTinySTL::uninitialized_fill(end2, old_begin, value);
                     MyTinySTL::fill(old_begin, pos, value);
                     _begin = new_begin;
-
                 }
             }
             else {
@@ -540,7 +538,10 @@ namespace MyTinySTL
             else {
                 require_capacity(n, false);
             }
-            for (auto cur = first; cur != last; cur++) {
+            pos = _begin + len;
+            auto cur = --last;
+
+            for (int i = 0;i<n;i++,--cur) {
                 insert(pos, *cur);
             }
         }
@@ -564,7 +565,7 @@ namespace MyTinySTL
         template <class T>
         void deque<T>::destroy_buffers(map_pointer first, map_pointer last) {
             for (auto tmp = first; tmp != last; tmp++) {
-                map_allocator::deallocate(*tmp, _buf_size);
+                data_allocator::deallocate(*tmp, _buf_size);
                 *tmp = nullptr;
             }
         }
@@ -577,11 +578,11 @@ namespace MyTinySTL
                     realloc_at_front(need_buffer);
                     return;
                 }
-                create_buffer(_begin.node - need_buffer, _begin - 1);
+                create_buffer(_begin.node - need_buffer, _begin.node - 1);
             }
             if (!front && static_cast<size_type>(_end.last - _end.cur - 1) < n) {
                 const size_type need_buffer = (n - (_end.last - _end.cur - 1))/ _buf_size + 1;
-                if (need_buffer > _map[_size - 1] - _end.node) {
+                if (need_buffer > _map + _size - _end.node - 1) {
                     realloc_at_back(need_buffer);
                     return;
                 }
@@ -611,6 +612,17 @@ namespace MyTinySTL
                 }
                 throw;
             }
+        }
+
+        template <class T>
+        typename deque<T>::map_pointer
+        deque<T>::create_map(size_type size)
+        {
+            map_pointer mp = nullptr;
+            mp = map_allocator::allocate(size);
+            for (size_type i = 0; i < size; ++i)
+                *(mp + i) = nullptr;
+            return mp;
         }
 
         template <class T>
@@ -711,30 +723,30 @@ namespace MyTinySTL
         template <class T>
         template <class ...Args>
         void deque<T>::emplace_back(Args&& ...args) {
-            if (_end.cur != _end.last) {
-                _end.cur++;
+            if (_end.cur != _end.last-1) {
                 data_allocator::construct(_end.cur, MyTinySTL::forward<Args>(args)...);
+                _end.cur++;
                 return;
             }
             else {
                 require_capacity(1, false);
-                _end++;
                 data_allocator::construct(_end.cur, MyTinySTL::forward<Args>(args)...);
+                _end++;
                 return;
             }
         }
 
         template <class T>
         void deque<T>::push_back(const value_type &value) {
-            if (_end.cur != _end.last) {
-                _end.cur++;
+            if (_end.cur != _end.last - 1) {
                 data_allocator::construct(_end.cur, value);
+                _end.cur++;
                 return;
             }
             else {
                 require_capacity(1, false);
-                _end++;
                 data_allocator::construct(_end.cur, value);
+                _end++;
                 return;
             }
         }
@@ -749,18 +761,19 @@ namespace MyTinySTL
                 begin1++;
                 auto begin2 = begin1;
                 begin1++;
-                auto end1 = begin1 + elems;
+                pos = _begin + elems;
+                auto end1 = pos;
                 end1++;
                 MyTinySTL::copy(begin1, end1, begin2);
             }
             else {
                 emplace_back(back());
-                auto begin1 = pos;
-                auto end2 = back();
+                auto end2 = _end;
                 end2--;
                 auto end1 = end2;
                 end1--;
-                MyTinySTL::copy_backward(begin1, end1, end2);
+                pos = _begin + elems;
+                MyTinySTL::copy_backward(pos, end1, end2);
             }
             *pos = std::move(value);
             return pos;
@@ -776,7 +789,7 @@ namespace MyTinySTL
             else if (pos.cur == _end.cur) {
                 push_back(value);
                 auto tmp = end();
-                tmp--;
+                --tmp;
                 return tmp;
             }
             else {
@@ -803,8 +816,7 @@ namespace MyTinySTL
         }
 
         template <class T>
-        typename deque<T>::iterator
-        deque<T>::insert(iterator pos, size_type n, const value_type &value) {
+        void deque<T>::insert(iterator pos, size_type n, const value_type &value) {
             if (pos.cur == _begin.cur) {
                 require_capacity(n, true);
                 auto new_begin = _begin - n;
@@ -817,15 +829,7 @@ namespace MyTinySTL
                 MyTinySTL::uninitialized_fill_n(_end, n, value);
                 _end = new_end;
             }
-            else insert_pos_n(pos, n, value);
-        }
-
-        template <class T>
-        template <class Iter, typename std::enable_if<
-                MyTinySTL::is_input_iterator<Iter>::value, int>::type = 0>
-        typename deque<T>::iterator
-        deque<T>::insert(iterator pos, Iter first, Iter last) {
-            insert_dispatch(pos, first, last);
+            else insert_aux_n(pos, n, value);
         }
 
         template <class T>
@@ -860,7 +864,7 @@ namespace MyTinySTL
         deque<T>::erase(iterator first, iterator last) {
             if (first == begin() && last == end()) {
                 clear();
-                return;
+                return _end;
             }
             const size_type len = last - first;
             const size_type elems = first - begin();
@@ -888,7 +892,7 @@ namespace MyTinySTL
             else {
                 data_allocator::destroy(_begin.cur);
                 _begin++;
-                destoroy_buffers(_begin.node-1, _begin.node-1);
+                destroy_buffers(_begin.node-1, _begin.node-1);
             }
         }
 
