@@ -103,6 +103,9 @@
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/rb_tree_test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/Test/test.cpp">
 			<Option target="stltest"/>
 		</Unit>

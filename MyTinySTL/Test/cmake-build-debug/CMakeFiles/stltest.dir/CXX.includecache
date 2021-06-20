@@ -6,6 +6,18 @@
 
 #IncludeRegexTransform: 
 
+../../MyTinySTL/rb_tree.h
+initializer_list
+-
+iterator.h
+../../MyTinySTL/iterator.h
+allocator.h
+../../MyTinySTL/allocator.h
+uninitialized.h
+../../MyTinySTL/uninitialized.h
+memory.h
+../../MyTinySTL/memory.h
+
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/algobase.h
 iterator.h
 D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/iterator.h
@@ -120,6 +132,12 @@ D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/list.h
 test.h
 D:/final fighting/Review-tree/MyTinySTL/Test/test.h
 
+D:/final fighting/Review-tree/MyTinySTL/Test/rb_tree_test.h
+rb_tree.h
+D:/final fighting/Review-tree/MyTinySTL/Test/rb_tree.h
+functional
+-
+
 D:/final fighting/Review-tree/MyTinySTL/Test/test.cpp
 vector_test.h
 D:/final fighting/Review-tree/MyTinySTL/Test/vector_test.h
@@ -127,6 +145,8 @@ list_test.h
 D:/final fighting/Review-tree/MyTinySTL/Test/list_test.h
 deque_test.h
 D:/final fighting/Review-tree/MyTinySTL/Test/deque_test.h
+rb_tree_test.h
+D:/final fighting/Review-tree/MyTinySTL/Test/rb_tree_test.h
 
 D:/final fighting/Review-tree/MyTinySTL/Test/test.h
 ctime

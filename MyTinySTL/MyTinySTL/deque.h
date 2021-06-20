@@ -259,6 +259,15 @@ namespace MyTinySTL
             const_reverse_iterator rend() const
             { return const_reverse_iterator(begin()); }
 
+            const_iterator         cbegin()
+            { return begin(); }
+            const_iterator         cend()    const
+            { return end(); }
+            const_reverse_iterator crbegin()
+            { return rbegin(); }
+            const_reverse_iterator crend()   const
+            { return rend(); }
+
             bool empty()
             { return  begin() == end(); }
 

@@ -10,11 +10,14 @@
 #include "vector_test.h"
 #include "list_test.h"
 #include "deque_test.h"
+#include "rb_tree_test.h"
+
 int main()
 {
     using namespace MyTinySTL::test;
 
     // vector_test();
     // list_test();
-    deque_test();
+    // deque_test();
+    rb_tree_test();
 }
