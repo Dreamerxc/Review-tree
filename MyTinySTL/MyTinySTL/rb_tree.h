@@ -85,10 +85,9 @@ namespace MyTinySTL
     class rb_tree_value_traits_imp<T, true>
     {
     public:
-        // todo std::remove_cv
-        typedef typename T::first_type  key_type;             // map中用作索引健类型
-        typedef typename T::second_type mapped_type;          // map中健所关联值的类型
-        typedef T                       value_type;           // map中具体值类型 pair<const v1, v2>
+        typedef typename std::remove_cv<typename T::first_type>::type key_type;             // map中的键
+        typedef typename T::second_type                               mapped_type;          // map中键所关联值的类型
+        typedef T                                                     value_type;           // map中具体值类型 pair<const v1, v2>
 
         template <class Ty>
         static const key_type get_key(const Ty& value) {
@@ -443,6 +442,14 @@ namespace MyTinySTL
 
        iterator insert_at_node(base_ptr x, node_ptr v, bool add_to_left);
        void rb_tree_insert_rebalance(base_ptr node, base_ptr& root);
+       void rb_tree_erase_rebalance(base_ptr z, base_ptr& root, base_ptr& leftmost, base_ptr& rightmost);
+
+       iterator insert_multi_use_pos(iterator pos, key_type& key, node_ptr node);
+       iterator insert_unique_use_pos(iterator pos, key_type& key, node_ptr node);
+
+       iterator insert_at_value(base_ptr pos, const value_type& value, bool add_to_left);
+
+       std::pair<iterator, iterator> equal_range_multi(const key_type& key);
    public:
        void clear();
 
@@ -454,6 +461,57 @@ namespace MyTinySTL
 
        template <class ...Args>
        std::pair<iterator, bool> emplace_unique(Args&& ...args);
+
+       template <class ...Args>
+       iterator emplace_multi_at_pos(iterator pos, Args&& ...args);
+       template <class ...Args>
+       iterator emplace_unique_at_pos(iterator pos, Args&& ...args);
+
+        iterator insert_multi(const value_type& value);
+        iterator insert_multi(value_type&& value)
+        { emplace_multi(MyTinySTL::move(value)); }
+
+        iterator insert_multi(iterator pos, const value_type& value)
+        { emplace_multi_at_pos(pos, value); }
+        iterator insert_multi(iterator pos, value_type&& value)
+        { emplace_multi_at_pos(pos, MyTinySTL::move(value)); }
+
+        template <class Iter>
+        iterator insert_multi(Iter first, Iter last) {
+            auto n = distance(first, last);
+            for (; n>0; n--, first++) {
+                emplace_multi(end(), *first);
+            }
+        }
+
+       std::pair<iterator, bool> insert_unique(const value_type& value);
+       std::pair<iterator, bool> insert_unique(value_type&& value)
+       { emplace_unique(MyTinySTL::move(value)); }
+
+       iterator insert_unique(iterator pos, const value_type& value)
+       { emplace_unique_at_pos(pos, value); }
+       iterator insert_unique(iterator pos, value_type&& value)
+       { emplace_unique_at_pos(pos, MyTinySTL::move(value)); }
+
+       template <class Iter>
+       iterator insert_unique(Iter first, Iter last) {
+           auto n = distance(first, last);
+           for (; n>0; n--, first++) {
+               emplace_unique(end(), *first);
+           }
+       }
+
+
+       iterator erase(iterator pos);
+       size_type erase_multi(const key_type& value);
+       size_type erase_unique(const key_type& value);
+       void erase(iterator first, iterator last);
+
+       iterator find(const key_type& key);
+       const_iterator find(const key_type& key) const;
+
+       iterator lower_bound(const key_type& key);
+       iterator upper_bound(const key_type& key);
    };
 
 
@@ -730,6 +788,166 @@ namespace MyTinySTL
         rb_tree_set_black(root);
     }
 
+
+    template <class T, class Compare>
+    void rb_tree<T, Compare>::rb_tree_erase_rebalance(base_ptr z, base_ptr &root, base_ptr &leftmost,
+                                                      base_ptr &rightmost) {
+        // y 是可能的替换节点，指向最终要删除的节点
+        auto y = (z->left == nullptr || z->right == nullptr) ? z : rb_tree_next(z);
+        // x 是 y 的一个独子节点或 NIL 节点
+        auto x = y->left != nullptr ? y->left : y->right;
+        // xp 为 x 的父节点
+        NodePtr xp = nullptr;
+
+        // y != z 说明 z 有两个非空子节点，此时 y 指向 z 右子树的最左节点，x 指向 y 的右子节点。
+        // 用 y 顶替 z 的位置，用 x 顶替 y 的位置，最后用 y 指向 z
+        if (y != z)
+        {
+            z->left->parent = y;
+            y->left = z->left;
+
+            // 如果 y 不是 z 的右子节点，那么 z 的右子节点一定有左孩子
+            if (y != z->right)
+            { // x 替换 y 的位置
+                xp = y->parent;
+                if (x != nullptr)
+                    x->parent = y->parent;
+
+                y->parent->left = x;
+                y->right = z->right;
+                z->right->parent = y;
+            }
+            else
+            {
+                xp = y;
+            }
+
+            // 连接 y 与 z 的父节点
+            if (root == z)
+                root = y;
+            else if (rb_tree_is_lchild(z))
+                z->parent->left = y;
+            else
+                z->parent->right = y;
+            y->parent = z->parent;
+            mystl::swap(y->color, z->color);
+            y = z;
+        }
+            // y == z 说明 z 至多只有一个孩子
+        else
+        {
+            xp = y->parent;
+            if (x)
+                x->parent = y->parent;
+
+            // 连接 x 与 z 的父节点
+            if (root == z)
+                root = x;
+            else if (rb_tree_is_lchild(z))
+                z->parent->left = x;
+            else
+                z->parent->right = x;
+
+            // 此时 z 有可能是最左节点或最右节点，更新数据
+            if (leftmost == z)
+                leftmost = x == nullptr ? xp : rb_tree_min(x);
+            if (rightmost == z)
+                rightmost = x == nullptr ? xp : rb_tree_max(x);
+        }
+
+        // 此时，y 指向要删除的节点，x 为替代节点，从 x 节点开始调整。
+        // 如果删除的节点为红色，树的性质没有被破坏，否则按照以下情况调整（x 为左子节点为例）：
+        // case 1: 兄弟节点为红色，令父节点为红，兄弟节点为黑，进行左（右）旋，继续处理
+        // case 2: 兄弟节点为黑色，且两个子节点都为黑色或 NIL，令兄弟节点为红，父节点成为当前节点，继续处理
+        // case 3: 兄弟节点为黑色，左子节点为红色或 NIL，右子节点为黑色或 NIL，
+        //         令兄弟节点为红，兄弟节点的左子节点为黑，以兄弟节点为支点右（左）旋，继续处理
+        // case 4: 兄弟节点为黑色，右子节点为红色，令兄弟节点为父节点的颜色，父节点为黑色，兄弟节点的右子节点
+        //         为黑色，以父节点为支点左（右）旋，树的性质调整完成，算法结束
+        if (!rb_tree_is_red(y))
+        { // x 为黑色时，调整，否则直接将 x 变为黑色即可
+            while (x != root && (x == nullptr || !rb_tree_is_red(x)))
+            {
+                if (x == xp->left)
+                { // 如果 x 为左子节点
+                    auto brother = xp->right;
+                    if (rb_tree_is_red(brother))
+                    { // case 1
+                        rb_tree_set_black(brother);
+                        rb_tree_set_red(xp);
+                        rb_tree_rotate_left(xp, root);
+                        brother = xp->right;
+                    }
+                    // case 1 转为为了 case 2、3、4 中的一种
+                    if ((brother->left == nullptr || !rb_tree_is_red(brother->left)) &&
+                        (brother->right == nullptr || !rb_tree_is_red(brother->right)))
+                    { // case 2
+                        rb_tree_set_red(brother);
+                        x = xp;
+                        xp = xp->parent;
+                    }
+                    else
+                    {
+                        if (brother->right == nullptr || !rb_tree_is_red(brother->right))
+                        { // case 3
+                            if (brother->left != nullptr)
+                                rb_tree_set_black(brother->left);
+                            rb_tree_set_red(brother);
+                            rb_tree_rotate_right(brother, root);
+                            brother = xp->right;
+                        }
+                        // 转为 case 4
+                        brother->color = xp->color;
+                        rb_tree_set_black(xp);
+                        if (brother->right != nullptr)
+                            rb_tree_set_black(brother->right);
+                        rb_tree_rotate_left(xp, root);
+                        break;
+                    }
+                }
+                else  // x 为右子节点，对称处理
+                {
+                    auto brother = xp->left;
+                    if (rb_tree_is_red(brother))
+                    { // case 1
+                        rb_tree_set_black(brother);
+                        rb_tree_set_red(xp);
+                        rb_tree_rotate_right(xp, root);
+                        brother = xp->left;
+                    }
+                    if ((brother->left == nullptr || !rb_tree_is_red(brother->left)) &&
+                        (brother->right == nullptr || !rb_tree_is_red(brother->right)))
+                    { // case 2
+                        rb_tree_set_red(brother);
+                        x = xp;
+                        xp = xp->parent;
+                    }
+                    else
+                    {
+                        if (brother->left == nullptr || !rb_tree_is_red(brother->left))
+                        { // case 3
+                            if (brother->right != nullptr)
+                                rb_tree_set_black(brother->right);
+                            rb_tree_set_red(brother);
+                            rb_tree_rotate_left(brother, root);
+                            brother = xp->left;
+                        }
+                        // 转为 case 4
+                        brother->color = xp->color;
+                        rb_tree_set_black(xp);
+                        if (brother->left != nullptr)
+                            rb_tree_set_black(brother->left);
+                        rb_tree_rotate_right(xp, root);
+                        break;
+                    }
+                }
+            }
+            if (x != nullptr)
+                rb_tree_set_black(x);
+        }
+        return y;
+    }
+
+
    template <class T, class Compare>
    rb_tree<T,Compare>::rb_tree(const rb_tree& rhs) {
         rb_tree_init();
@@ -802,9 +1020,288 @@ namespace MyTinySTL
         node_ptr node = create_node(MyTinySTL::forward<Args>(args)...);
         auto res = get_insert_unique(value_traits::get_key(node->value));
         if (res.second) {
-            return std::make_pair(insert_at_node(res.first.first, node, res.first.second));
+            return std::make_pair(insert_at_node(res.first.first, node, res.first.second), true);
         }
         destroy_node(node);
         return std::make_pair(res.first.first, false);
+    }
+
+    template <class T, class Compare>
+    template <class ...Args>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::emplace_multi_at_pos(iterator pos, Args&& ...args) {
+        node_ptr node = create_node(MyTinySTL::forward<Args>(args)...);
+        if (node_count == 0) {
+            return insert_at_node(header, node, true);
+        }
+        key_type key = value_traits::get_key(node->value);
+        if (pos == begin()) {
+            if (key_compare(key, value_traits::get_key(*pos))) {
+                return insert_at_node(pos.node, node, true);
+            }
+            else {
+                auto res = get_insert_multi(value_traits::get_key(node->value));
+                return insert_at_node(res.first, node, res.second);
+            }
+        }
+        else if (pos == end()) {
+            if (!key_compare(key, value_traits::get_key(static_cast<node_ptr>(rightmost())->value))) {
+                return insert_at_node(rightmost(), node, false);
+            }
+            else {
+                auto res = get_insert_multi(value_traits::get_key(node->value));
+                return insert_at_node(res.first, node, res.second);
+            }
+        }
+        return insert_multi_use_pos(pos, key, node);
+    }
+
+    template <class T, class Compare>
+    template <class ...Args>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::emplace_unique_at_pos(iterator pos, Args&& ...args) {
+        node_ptr node = create_node(MyTinySTL::forward<Args>(args)...);
+        if (node_count == 0) {
+            return insert_at_node(header, node, true);
+        }
+        key_type key = value_traits::get_key(node->value);
+        if (pos == begin()) {
+            if (key_compare(key, value_traits::get_key(*pos))) {
+                return insert_at_node(pos.node, node, true);
+            }
+            else {
+                auto res = get_insert_unique(key);
+                if (!res.second) {
+                    destroy_node(node);
+                    return res.first.first;
+                }
+                return insert_at_node(res.first.first, node, res.first.second);
+            }
+        }
+        else if (pos == end()) {
+            if (!key_compare(key, value_traits::get_key(static_cast<node_ptr>(rightmost())->value))) {
+                return insert_at_node(rightmost(), node, false);
+            }
+            else {
+                auto res = get_insert_unique(key);
+                if (!res.second) {
+                    destroy_node(node);
+                    return res.first.first;
+                }
+                return insert_at_node(res.first.first, node, res.first.second);
+            }
+        }
+        return insert_unique_use_pos(pos, key, node);
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::insert_multi(const value_type &value) {
+        auto res = get_insert_multi(value_traits::get_key(value));
+        return insert_at_value(res.first, value, res.second);
+    }
+
+    template <class T, class Compare>
+    std::pair<typename rb_tree<T, Compare>::iterator, bool>
+    rb_tree<T, Compare>::insert_unique(const value_type &value) {
+        auto res = get_insert_unique(value_traits::get_key(value));
+        if (res.second) {
+            return std::make_pair(insert_at_node(res.first.first, value, res.first.second), true);
+        }e);
+        return std::make_pair(res.first.first, false);
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::insert_multi_use_pos(iterator pos, key_type &key, node_ptr node) {
+        auto x = pos.node;
+        auto next = node;
+        next--;
+        auto y = next.node;
+        if (!key_compare(key, value_traits::get_key(*next)&&
+          !key_compare(value_traits::get_key(*pos),key)) {
+            if (y->right == nullptr) {
+                return insert_at_node(y, node, false);
+            }
+            if (x->left == nullptr) {
+                return insert_at_node(x, node, true);
+            }
+        }
+        auto res = get_insert_multi(value_traits::get_key(key));
+        return insert_at_node(res.first, node, res.second);
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::insert_unique_use_pos(iterator pos, key_type &key, node_ptr node) {
+        auto x = pos.node;
+        auto next = node;
+        next--;
+        auto y = next.node;
+        if (!key_compare(key, value_traits::get_key(*next)&&
+              !key_compare(value_traits::get_key(*pos),key)) {
+            if (y->right == nullptr) {
+                return insert_at_node(y, node, false);
+            }
+            if (x->left == nullptr) {
+                return insert_at_node(x, node, true);
+            }
+        }
+        auto res = get_insert_unique(key);
+        if (!res.second) {
+            destroy_node(node);
+            return res.first.first;
+        }
+        return insert_at_node(res.first.first, node, res.first.second);
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::insert_at_value(base_ptr pos, const value_type &value, bool add_to_left) {
+        node_ptr node = create_node(value);
+        node->parent = pos;
+        auto base_node = node.get_base_ptr();
+        if (pos == header) {
+            root() = base_node;
+            leftmost() = base_node;
+            rightmost() = base_node;
+        }
+        else if (add_to_left) {
+            pos->left = base_node;
+            if (leftmost() == pos) {
+                leftmost() = base_node;
+            }
+        }
+        else {
+            pos->right = base_node;
+            if (rightmost() == pos) {
+                rightmost() = base_node;
+            }
+        }
+        rb_tree_insert_rebalance(base_node, root());
+        node_count++;
+        return iterator(node);
+    }
+
+    template <class T, class Compare>
+    std::pair<typename rb_tree<T, Compare>::iterator, typename rb_tree<T, Compare>::iterator>
+    rb_tree<T, Compare>::equal_range_multi(const key_type &key) {
+        return std::make_pair(lower_bound(key), upper_bound(key));
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::erase(iterator pos) {
+        auto node = static_cast<node_ptr>(pos.node);
+        iterator res(pos);
+        res++;
+
+        rb_tree_erase_rebalance(pos.node, root(), leftmost(), rightmost());
+        destroy_node(node);
+        node_count--;
+        return res;
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::size_type
+    rb_tree<T, Compare>::erase_multi(const key_type &key) {
+        auto range = equal_range_multi(key);
+        auto n = MyTinySTL::distance(range.first, range.second);
+        erase(range.first, range.second);
+        return n;
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::size_type
+    rb_tree<T, Compare>::erase_unique(const key_type &key) {
+        auto it = find(key);
+        if (it != nullptr) {
+            erase(it);
+            return;
+        }
+        return 0;
+    }
+
+    template <class T, class Compare>
+    void rb_tree<T, Compare>::erase(typename rb_tree<T, Compare>::iterator first,
+                    typename rb_tree<T, Compare>::iterator last) {
+        if (first == begin() && last == end()) {
+            clear();
+        }
+        else {
+            while (first != last) {
+                erase(first++);
+            }
+        }
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::find(const key_type &key) {
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (!key_compare(value_traits::get_key(static_cast<node_ptr>(x)->value), key)) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        iterator v(y);
+        (v == end() || key_comp_(key, value_traits::get_key(*v))) ? end() : v;
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::const_iterator
+    rb_tree<T, Compare>::find(const key_type &key) const {
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (!key_compare(value_traits::get_key(static_cast<node_ptr>(x)->value), key)) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        iterator v(y);
+        (v == end() || key_comp_(key, value_traits::get_key(*v))) ? end() : v;
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::lower_bound(const key_type &key) {
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (!key_compare(value_traits::get_key(static_cast<node_ptr>(x)->value), key)) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        return iterator(y);
+    }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::iterator
+    rb_tree<T, Compare>::upper_bound(const key_type &key) {
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (key_compare(key, value_traits::get_key(static_cast<node_ptr>(x)->value))) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        return iterator(y);
     }
 }

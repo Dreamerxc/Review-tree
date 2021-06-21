@@ -141,20 +141,32 @@ stltest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/build
 .PHONY : stltest/fast
 
-# target to build an object file
-test.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.obj
+test.obj: test.cpp.obj
+
 .PHONY : test.obj
 
-# target to preprocess a source file
-test.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.i
+# target to build an object file
+test.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.cpp.obj
+.PHONY : test.cpp.obj
+
+test.i: test.cpp.i
+
 .PHONY : test.i
 
-# target to generate assembly for a file
-test.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.s
+# target to preprocess a source file
+test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.cpp.i
+.PHONY : test.cpp.i
+
+test.s: test.cpp.s
+
 .PHONY : test.s
+
+# target to generate assembly for a file
+test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\stltest.dir\build.make CMakeFiles/stltest.dir/test.cpp.s
+.PHONY : test.cpp.s
 
 # Help Target
 help:

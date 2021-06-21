@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6"/>
 	<Project>
-		<Option title="Project"/>
+		<Option title="MyTinySTL"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
 		<Option virtualFolders="CMake Files\;"/>
@@ -95,6 +95,9 @@
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/rb_tree.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/set.h">
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="D:/final fighting/Review-tree/MyTinySTL/MyTinySTL/stack.h">

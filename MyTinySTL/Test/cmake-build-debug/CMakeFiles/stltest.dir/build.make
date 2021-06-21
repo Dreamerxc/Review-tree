@@ -75,28 +75,28 @@ include CMakeFiles/stltest.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/stltest.dir/flags.make
 
-CMakeFiles/stltest.dir/test.obj: CMakeFiles/stltest.dir/flags.make
-CMakeFiles/stltest.dir/test.obj: CMakeFiles/stltest.dir/includes_CXX.rsp
-CMakeFiles/stltest.dir/test.obj: ../test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\final fighting\Review-tree\MyTinySTL\Test\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/stltest.dir/test.obj"
-	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\stltest.dir\test.obj -c "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp"
+CMakeFiles/stltest.dir/test.cpp.obj: CMakeFiles/stltest.dir/flags.make
+CMakeFiles/stltest.dir/test.cpp.obj: CMakeFiles/stltest.dir/includes_CXX.rsp
+CMakeFiles/stltest.dir/test.cpp.obj: ../test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\final fighting\Review-tree\MyTinySTL\Test\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/stltest.dir/test.cpp.obj"
+	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\stltest.dir\test.cpp.obj -c "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp"
 
-CMakeFiles/stltest.dir/test.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/stltest.dir/test.i"
-	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp" > CMakeFiles\stltest.dir\test.i
+CMakeFiles/stltest.dir/test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/stltest.dir/test.cpp.i"
+	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp" > CMakeFiles\stltest.dir\test.cpp.i
 
-CMakeFiles/stltest.dir/test.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/stltest.dir/test.s"
-	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp" -o CMakeFiles\stltest.dir\test.s
+CMakeFiles/stltest.dir/test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/stltest.dir/test.cpp.s"
+	D:\QT\Tools\mingw730_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "D:\final fighting\Review-tree\MyTinySTL\Test\test.cpp" -o CMakeFiles\stltest.dir\test.cpp.s
 
 # Object files for target stltest
 stltest_OBJECTS = \
-"CMakeFiles/stltest.dir/test.obj"
+"CMakeFiles/stltest.dir/test.cpp.obj"
 
 # External object files for target stltest
 stltest_EXTERNAL_OBJECTS =
 
-../bin/stltest.exe: CMakeFiles/stltest.dir/test.obj
+../bin/stltest.exe: CMakeFiles/stltest.dir/test.cpp.obj
 ../bin/stltest.exe: CMakeFiles/stltest.dir/build.make
 ../bin/stltest.exe: CMakeFiles/stltest.dir/linklibs.rsp
 ../bin/stltest.exe: CMakeFiles/stltest.dir/objects1.rsp
