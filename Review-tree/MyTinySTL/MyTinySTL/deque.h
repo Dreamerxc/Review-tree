@@ -230,7 +230,7 @@ namespace MyTinySTL
             }
 
             ~deque() {
-                for (int i = 0;i<_size;i++) {
+                for (auto i = 0;i<_size;i++) {
                     for (auto p = _map[i]; !p && p < _map[i] + _buf_size; p++) {
                         data_allocator::destroy(p);
                     }

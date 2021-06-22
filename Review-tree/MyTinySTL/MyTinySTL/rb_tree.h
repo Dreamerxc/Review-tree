@@ -797,7 +797,7 @@ namespace MyTinySTL
         // x 是 y 的一个独子节点或 NIL 节点
         auto x = y->left != nullptr ? y->left : y->right;
         // xp 为 x 的父节点
-        NodePtr xp = nullptr;
+        base_ptr xp = nullptr;
 
         // y != z 说明 z 有两个非空子节点，此时 y 指向 z 右子树的最左节点，x 指向 y 的右子节点。
         // 用 y 顶替 z 的位置，用 x 顶替 y 的位置，最后用 y 指向 z
@@ -830,7 +830,7 @@ namespace MyTinySTL
             else
                 z->parent->right = y;
             y->parent = z->parent;
-            mystl::swap(y->color, z->color);
+            MyTinySTL::swap(y->color, z->color);
             y = z;
         }
             // y == z 说明 z 至多只有一个孩子
@@ -1107,7 +1107,7 @@ namespace MyTinySTL
         auto res = get_insert_unique(value_traits::get_key(value));
         if (res.second) {
             return std::make_pair(insert_at_node(res.first.first, value, res.first.second), true);
-        }e);
+        }
         return std::make_pair(res.first.first, false);
     }
 
@@ -1119,7 +1119,7 @@ namespace MyTinySTL
         next--;
         auto y = next.node;
         if (!key_compare(key, value_traits::get_key(*next)&&
-          !key_compare(value_traits::get_key(*pos),key)) {
+          !key_compare(value_traits::get_key(*pos),key))) {
             if (y->right == nullptr) {
                 return insert_at_node(y, node, false);
             }
@@ -1139,7 +1139,7 @@ namespace MyTinySTL
         next--;
         auto y = next.node;
         if (!key_compare(key, value_traits::get_key(*next)&&
-              !key_compare(value_traits::get_key(*pos),key)) {
+              !key_compare(value_traits::get_key(*pos),key))) {
             if (y->right == nullptr) {
                 return insert_at_node(y, node, false);
             }
