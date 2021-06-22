@@ -1,0 +1,3 @@
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/stltest.dir
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/rebuild_cache.dir

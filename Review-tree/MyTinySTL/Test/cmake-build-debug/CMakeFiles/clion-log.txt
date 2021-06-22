@@ -1,0 +1,4 @@
+"C:\Program Files\JetBrains\CLion 2021.1.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\extralfiles\github\Review-tree\MyTinySTL\Test
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/extralfiles/github/Review-tree/MyTinySTL/Test/cmake-build-debug
