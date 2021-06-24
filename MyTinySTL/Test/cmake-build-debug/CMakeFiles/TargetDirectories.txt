@@ -1,3 +1,0 @@
-D:/final fighting/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/stltest.dir
-D:/final fighting/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/final fighting/Review-tree/MyTinySTL/Test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
