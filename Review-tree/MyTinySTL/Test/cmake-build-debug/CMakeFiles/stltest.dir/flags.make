@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = @CMakeFiles/stltest.dir/includes_CXX.rsp
 
-CXX_FLAGS =  -Wall -fexec-charset=UTF-8 -g
+CXX_FLAGS =  -Wall -fexec-charset=GBK -g
 

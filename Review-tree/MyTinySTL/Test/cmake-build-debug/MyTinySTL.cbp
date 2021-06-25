@@ -82,40 +82,28 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/deque.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/list.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/map.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/queue.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/rb_tree.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/set.h">
-			<Option target="stltest"/>
-		</Unit>
-		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/stack.h">
-			<Option target="stltest"/>
-		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/deque_test.h">
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/list_test.h">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue_test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h">
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.cpp">
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.h">
+			<Option target="stltest"/>
+		</Unit>
+		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/vector_test.h">
 			<Option target="stltest"/>
 		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/CMakeLists.txt">

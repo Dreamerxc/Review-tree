@@ -5,7 +5,7 @@
 #ifndef MYTINYSTL_STACK_H
 #define MYTINYSTL_STACK_H
 
-#endif //MYTINYSTL_STACK_H
+
 
 #include "deque.h"
 
@@ -18,11 +18,9 @@ namespace MyTinySTL
     public:
         typedef Container                                container_type;
         typedef typename Container::value_type           value_type;
-        typedef typename Container::const_pointer        const_pointer;
         typedef typename Container::reference            reference;
         typedef typename Container::const_reference      const_reference;
         typedef typename Container::size_type            size_type;
-        typedef typename Container::difference_type      difference_type;
 
     private:
         container_type _st;
@@ -36,16 +34,14 @@ namespace MyTinySTL
         stack(Container& rhs) : _st(rhs) {}
         stack(Container&& rhs) : _st(MyTinySTL::move(rhs)) {}
 
-        explicit stack(const size_type& n) : _st(n) {}
-        stack(const size_type& n, const value_type& value) : _st(n, value) {}
+        explicit stack(size_type n) : _st(n) {}
+        stack(size_type n, const value_type& value) : _st(n, value) {}
 
         template <class Iter>
-        stack(Iter first, Iter last) {
-            _st(first, last);
-        }
-        stack(std::initializer_list<value_type> ilist) {
-            _st(ilist.begin(), ilist.end());
-        }
+        stack(Iter first, Iter last):_st(first, last) {}
+        stack(std::initializer_list<value_type> ilist)
+        :  _st(ilist.begin(), ilist.end())
+        {}
 
         stack& operator=(const stack& rhs) {
             _st = rhs._st;
@@ -68,7 +64,7 @@ namespace MyTinySTL
         reference top() { return _st.back(); }
         const_reference top() const { return _st.back(); }
 
-        size_type size() { return _st.size(); }
+        size_type size() {return _st.size(); }
         bool empty() {return _st.empty(); }
 
         template <class ...Args>
@@ -136,3 +132,4 @@ namespace MyTinySTL
             return !(lhs < rhs);
         }
 }
+#endif //MYTINYSTL_STACK_H

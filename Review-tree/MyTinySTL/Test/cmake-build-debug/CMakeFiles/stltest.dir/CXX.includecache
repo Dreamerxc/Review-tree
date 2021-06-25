@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+../../MyTinySTL/deque.h
+initializer_list
+-
+iterator.h
+../../MyTinySTL/iterator.h
+allocator.h
+../../MyTinySTL/allocator.h
+uninitialized.h
+../../MyTinySTL/uninitialized.h
+
 ../../MyTinySTL/rb_tree.h
 initializer_list
 -
@@ -17,6 +27,10 @@ uninitialized.h
 ../../MyTinySTL/uninitialized.h
 memory.h
 ../../MyTinySTL/memory.h
+
+../../MyTinySTL/stack.h
+deque.h
+../../MyTinySTL/deque.h
 
 C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/algobase.h
 iterator.h
@@ -138,6 +152,12 @@ C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree.h
 functional
 -
 
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h
+stack.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack.h
+test.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.h
+
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.cpp
 vector_test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/vector_test.h
@@ -147,6 +167,8 @@ deque_test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/deque_test.h
 rb_tree_test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h
+stack_test.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h
 
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.h
 ctime
