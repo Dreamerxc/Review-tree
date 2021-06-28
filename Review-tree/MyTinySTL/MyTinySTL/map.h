@@ -5,12 +5,24 @@
 #ifndef MYTINYSTL_MAP_H
 #define MYTINYSTL_MAP_H
 
-#endif //MYTINYSTL_MAP_H
 #include "rb_tree.h"
-#include <functional>
+
 
 namespace MyTinySTL
 {
+    template<typename Arg1, typename Arg2, typename Result>
+    struct binary_function
+    {
+        /// @c first_argument_type is the type of the first argument
+        typedef Arg1 	first_argument_type;
+
+        /// @c second_argument_type is the type of the second argument
+        typedef Arg2 	second_argument_type;
+
+        /// @c result_type is the return type
+        typedef Result 	result_type;
+    };
+
     template <class Key, class T, class Compare = std::less<Key> >
     class map
     {
@@ -22,22 +34,23 @@ namespace MyTinySTL
 
         // 定义一个functor, 其作用是调用“元素比较函数”
         class value_compare : public binary_function<value_type, value_type, bool> {
-            friend class map<Key, T, Compare>
+            friend class map<Key, T, Compare>;
         private:
             Compare comp;
             value_compare(Compare c) : comp(c) {}
+
         public:
-            bool operator=(const value_type& lhs, const value_type& rhs) const {
+            bool operator()(const value_type& lhs, const value_type& rhs) const {
                 return comp(lhs.first, rhs.first);
             }
         };
     private:
-        typedef MyTinySTL::rb_tree<value_type, key_compare > map_type;
-        map_type tree_;
+        typedef MyTinySTL::rb_tree<value_type, key_compare > base_type;
+        base_type tree_;
 
 
     public:
-        typedef typename base_type::node_type              node_type;
+        typedef typename base_type::tree_type              tree_type;
         typedef typename base_type::pointer                pointer;
         typedef typename base_type::const_pointer          const_pointer;
         typedef typename base_type::reference              reference;
@@ -113,50 +126,52 @@ namespace MyTinySTL
         size_type size() { return tree_.size(); }
 
         mapped_type& at(const key_type& key) {
-            auto it = find(key);
-            if (it == end() || key_comp()(it->first, key)
+            auto it = lower_bound(key);
+            if (it == end() || key_comp()(it->first, key))
                 throw std::out_of_range("No elems exits!");
             return it->second;
         }
 
         const mapped_type& at(const key_type& key) const{
-            auto it = find(key);
-            if (it == end() || key_comp()(it->first, key)
+            auto it = lower_bound(key);
+            if (it == end() || key_comp()(it->first, key))
                 throw std::out_of_range("No elems exits!");
             return it->second;
         }
 
-        mapped_type& operator=(const key_type& key) {
-            auto it = find(key);
-            if (it == end() || key_comp()(it->first, key))
-                // todo
+        mapped_type& operator[](const key_type& key) {
+            iterator it = lower_bound(key);
+            if (it == end() || key_comp()(key, it->first)) {
+                it = emplace_pos(it, key, key);
+            }
             return it->second;
         }
 
-        mapped_type& operator=(key_type&& key) {
-            auto it = find(key);
-            if (it == end() || key_comp()(it->first, key))
-                // todo
-                return it->second;
+        mapped_type& operator[](key_type&& key) {
+            iterator it = lower_bound(key);
+            if (it == end() || key_comp()(key, it->first)) {
+                it = emplace_pos(it, MyTinySTL::move(key), T{});
+            }
+            return it->second;
         }
 
         template <class ...Args>
         std::pair<iterator, bool> emplace(Args&& ...args) {
-            tree_.emplace_unique(MyTinySTL::forward(args)...);
+            return tree_.emplace_unique(MyTinySTL::forward(args)...);
         }
 
         template <class ...Args>
         iterator emplace_pos(iterator pos, Args&& ...args) {
-            tree_.emplace_unique_at_pos(pos, MyTinySTL::forward(args)...);
+            return tree_.emplace_unique_at_pos(pos, MyTinySTL::forward<Args>(args)...);
         }
 
-        pair<iterator, bool> insert(const value_type& value)
+        std::pair<iterator, bool> insert(const value_type& value)
         {
             return tree_.insert_unique(value);
         }
-        pair<iterator, bool> insert(value_type&& value)
+        std::pair<iterator, bool> insert(value_type&& value)
         {
-            return tree_.insert_unique(mystl::move(value));
+            return tree_.insert_unique(MyTinySTL::move(value));
         }
 
         iterator insert(iterator pos, const value_type& value)
@@ -165,7 +180,7 @@ namespace MyTinySTL
         }
         iterator insert(iterator pos, value_type&& value)
         {
-            return tree_.insert_unique(pos, mystl::move(value));
+            return tree_.insert_unique(pos, MyTinySTL::move(value));
         }
 
         template <class Iter>
@@ -181,6 +196,12 @@ namespace MyTinySTL
 
         iterator       find(const key_type& key)              { return tree_.find(key); }
         const_iterator find(const key_type& key)        const { return tree_.find(key); }
+
+        iterator       lower_bound(const key_type& key)              { return tree_.lower_bound(key); }
+        const_iterator lower_bound(const key_type& key)        const { return tree_.lower_bound(key); }
+
+        iterator       upper_bound(const key_type& key)              { return tree_.upper_bound(key); }
+        const_iterator upper_bound(const key_type& key)        const { return tree_.upper_bound(key); }
 
     public:
         friend bool operator==(const map& lhs, const map& rhs) { return lhs.tree_ == rhs.tree_; }
@@ -229,3 +250,5 @@ namespace MyTinySTL
         lhs.swap(rhs);
     }
 }
+
+#endif //MYTINYSTL_MAP_H

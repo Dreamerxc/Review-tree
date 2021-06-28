@@ -25,13 +25,13 @@ namespace MyTinySTL{
 
 
 
-    // pair traits
+   /* // pair traits
     template <class T1, class T2>
-    struct pair;
+    struct pair;*/
 
     template <class T>
     struct is_pair : MyTinySTL::m_false_type {};
 
     template <class T1, class T2>
-    struct is_pair<MyTinySTL::pair<T1, T2>>: MyTinySTL::m_true_type {};
+    struct is_pair<std::pair<T1, T2>>: MyTinySTL::m_true_type {};
 }

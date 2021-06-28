@@ -30,7 +30,7 @@ namespace MyTinySTL {
     namespace test {
         void stack_test() {
             std::cout << "==================================\n";
-            std::cout << "========= rb_tree test ============\n";
+            std::cout << "========= stack test ============\n";
             std::cout << "==================================\n";
             stack<int> st;
             Print_stack("默认构造函数",st);

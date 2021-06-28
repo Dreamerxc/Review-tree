@@ -88,6 +88,9 @@
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/list_test.h">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/map_test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue_test.h">
 			<Option target="stltest"/>
 		</Unit>

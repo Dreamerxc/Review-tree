@@ -50,7 +50,7 @@ namespace MyTinySTL
     }
 
     // pair 模板
-    template <class Ty1, class Ty2>
+    /*template <class Ty1, class Ty2>
     struct pair
     {
             typedef Ty1 first_type;
@@ -61,6 +61,6 @@ namespace MyTinySTL
         template <class T1, class T2>
         pair(T1& other1, T2& other2) : first(other1), second(other2){}
 
-    };
+    };*/
 
 }

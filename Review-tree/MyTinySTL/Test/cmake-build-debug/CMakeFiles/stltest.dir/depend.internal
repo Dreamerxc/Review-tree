@@ -3,6 +3,8 @@
 
 CMakeFiles/stltest.dir/test.cpp.obj
  ../../MyTinySTL/deque.h
+ ../../MyTinySTL/map.h
+ ../../MyTinySTL/queue.h
  ../../MyTinySTL/rb_tree.h
  ../../MyTinySTL/stack.h
  C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/algobase.h
@@ -18,6 +20,8 @@ CMakeFiles/stltest.dir/test.cpp.obj
  C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/vector.h
  C:/extralfiles/github/Review-tree/MyTinySTL/Test/deque_test.h
  C:/extralfiles/github/Review-tree/MyTinySTL/Test/list_test.h
+ C:/extralfiles/github/Review-tree/MyTinySTL/Test/map_test.h
+ C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue_test.h
  C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h
  C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h
  C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.cpp

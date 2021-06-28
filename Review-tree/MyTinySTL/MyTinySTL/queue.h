@@ -35,16 +35,12 @@ namespace MyTinySTL
         queue(Container& rhs) : _qu(rhs) {}
         queue(Container&& rhs) : _qu(MyTinySTL::move(rhs)) {}
 
-        explicit queue(const size_type& n) : _qu(n) {}
-        queue(const size_type& n, const value_type& value) : _qu(n, value) {}
+        explicit queue(size_type n) : _qu(n) {}
+        queue(size_type n, const value_type& value) : _qu(n, value) {}
 
         template <class Iter>
-        queue(Iter first, Iter last) {
-            _qu(first, last);
-        }
-        queue(std::initializer_list<value_type> ilist) {
-            _qu(ilist.begin(), ilist.end());
-        }
+        queue(Iter first, Iter last) : _qu(first, last) {}
+        queue(std::initializer_list<value_type> ilist) : _qu(ilist.begin(), ilist.end()) {}
 
         queue& operator=(const queue& rhs) {
             _qu = rhs._qu;
@@ -63,8 +59,8 @@ namespace MyTinySTL
 
         ~queue() = default;
     public:
-        reference front() { return _qu.begin(); }
-        const_reference front() const { return _qu.begin(); }
+        reference front() { return _qu.front(); }
+        const_reference front() const { return _qu.front(); }
 
         reference back() { return _qu.back(); }
         const_reference back() const { return _qu.back(); }
@@ -92,7 +88,7 @@ namespace MyTinySTL
             _qu.clear();
         }
 
-        void swap(& rhs) {
+        void swap(queue& rhs) {
             MyTinySTL::swap(_qu, rhs._qu);
         }
     public:

@@ -16,6 +16,14 @@ allocator.h
 uninitialized.h
 ../../MyTinySTL/uninitialized.h
 
+../../MyTinySTL/map.h
+rb_tree.h
+../../MyTinySTL/rb_tree.h
+
+../../MyTinySTL/queue.h
+deque.h
+../../MyTinySTL/deque.h
+
 ../../MyTinySTL/rb_tree.h
 initializer_list
 -
@@ -146,6 +154,14 @@ C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/list.h
 test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.h
 
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/map_test.h
+map.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/map.h
+
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue_test.h
+queue.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue.h
+
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h
 rb_tree.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree.h
@@ -169,6 +185,10 @@ rb_tree_test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h
 stack_test.h
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h
+queue_test.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/queue_test.h
+map_test.h
+C:/extralfiles/github/Review-tree/MyTinySTL/Test/map_test.h
 
 C:/extralfiles/github/Review-tree/MyTinySTL/Test/test.h
 ctime

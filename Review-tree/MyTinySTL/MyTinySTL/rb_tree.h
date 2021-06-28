@@ -5,8 +5,6 @@
 #ifndef MYTINYSTL_RB_TREE_H
 #define MYTINYSTL_RB_TREE_H
 
-#endif //MYTINYSTL_RB_TREE_H
-
 #include<initializer_list>
 #include "iterator.h"
 #include "allocator.h"
@@ -16,8 +14,8 @@
 namespace MyTinySTL
 {
     typedef bool _rb_tree_color_type;
-    const _rb_tree_color_type _rb_tree_red = false;
-    const _rb_tree_color_type _rb_tree_black = true;
+    static constexpr _rb_tree_color_type _rb_tree_red = false;
+    static constexpr _rb_tree_color_type _rb_tree_black = true;
 
     class _rb_tree_node_base;
     template <class T> class _rb_tree_node;
@@ -58,8 +56,6 @@ namespace MyTinySTL
         node_ptr get_node_ptr() {
             return &*this;
         }
-
-
     };
 
     template <class T, bool>
@@ -72,7 +68,7 @@ namespace MyTinySTL
 
         template <class Ty>
         static const key_type get_key(const Ty& value) {
-            return value.first;
+            return value;
         }
 
         template <class Ty>
@@ -127,6 +123,8 @@ namespace MyTinySTL
     class rb_tree_traits
     {
     public:
+        typedef _rb_tree_color_type       color_type;
+
         typedef rb_tree_value_traits<T>   value_traits;
 
         typedef typename value_traits::key_type    key_type;
@@ -147,13 +145,14 @@ namespace MyTinySTL
 
 
     template <class T>
-    class _rb_tree_base_iterator : public MyTinySTL::iterator<MyTinySTL::forward_iterator_tag, T>
+    class _rb_tree_base_iterator : public MyTinySTL::iterator<MyTinySTL::bidirectional_iterator_tag, T>
     {
     public:
         typedef typename rb_tree_traits<T>::base_ptr base_ptr;
 
         base_ptr node;
 
+        _rb_tree_base_iterator() : node(nullptr) {}
         void increment() {
             if (node->right != nullptr) {
                 node = node->right;
@@ -196,7 +195,7 @@ namespace MyTinySTL
         }
 
         bool operator==(const _rb_tree_base_iterator& rhs) { return node == rhs.node; }
-        bool operator!=(const _rb_tree_base_iterator& rhs) { return node == rhs.node; }
+        bool operator!=(const _rb_tree_base_iterator& rhs) { return node != rhs.node; }
     };
 
     template <class T>
@@ -235,7 +234,7 @@ namespace MyTinySTL
         }
 
         reference operator*() const {
-            return node_ptr(node)->value;
+            return static_cast<node_ptr>(node)->value;
         }
 
         pointer operator->() const {
@@ -325,7 +324,7 @@ namespace MyTinySTL
         }
 
         self operator--(int) {
-            self tmp = *this;
+            self tmp(*this);
             --*this;
             return *this;
         }
@@ -364,6 +363,7 @@ namespace MyTinySTL
        typedef reverse_iterator<iterator>                             reverse_iterator;
        typedef MyTinySTL::reverse_iterator<const_iterator>            const_reverse_iterator;
 
+       Compare key_comp() const { return key_compare; }
    private:
        size_type       node_count;            // 节点数量
        base_ptr        header;                // 和父节点互为父节点
@@ -442,7 +442,7 @@ namespace MyTinySTL
 
        iterator insert_at_node(base_ptr x, node_ptr v, bool add_to_left);
        void rb_tree_insert_rebalance(base_ptr node, base_ptr& root);
-       void rb_tree_erase_rebalance(base_ptr z, base_ptr& root, base_ptr& leftmost, base_ptr& rightmost);
+       base_ptr rb_tree_erase_rebalance(base_ptr z, base_ptr& root, base_ptr& leftmost, base_ptr& rightmost);
 
        iterator insert_multi_use_pos(iterator pos, key_type& key, node_ptr node);
        iterator insert_unique_use_pos(iterator pos, key_type& key, node_ptr node);
@@ -450,11 +450,13 @@ namespace MyTinySTL
        iterator insert_at_value(base_ptr pos, const value_type& value, bool add_to_left);
 
        std::pair<iterator, iterator> equal_range_multi(const key_type& key);
+
+       base_ptr rb_tree_next(base_ptr x);
    public:
        void clear();
 
        bool empty() const { return node_count == 0; }
-       bool size() const { return node_count; }
+       size_type size() const { return node_count; }
 
        template <class ...Args>
        iterator emplace_multi(Args&& ...args);
@@ -511,7 +513,10 @@ namespace MyTinySTL
        const_iterator find(const key_type& key) const;
 
        iterator lower_bound(const key_type& key);
+       const_iterator lower_bound(const key_type& key) const;
+
        iterator upper_bound(const key_type& key);
+       const_iterator upper_bound(const key_type& key) const;
    };
 
 
@@ -519,7 +524,7 @@ namespace MyTinySTL
    void rb_tree<T, Compare>::rb_tree_init() {
         header = base_allocator::allocate(1);
         header->color = _rb_tree_red;
-        root() == nullptr;
+        root() = nullptr;
         leftmost() = header;
         rightmost() = header;
         node_count = 0;
@@ -683,7 +688,9 @@ namespace MyTinySTL
         auto parent = header;
         bool add_to_left = true;
         while (child != nullptr) {
+            //std::cout << key << "  " << value_traits::get_key(static_cast<node_ptr>(child)->value) << std::endl;
             parent = child;
+            //std::cout << key << std::endl;
             add_to_left = key_compare(key, value_traits::get_key(static_cast<node_ptr>(child)->value));
             child = add_to_left ? child->left : child->right;
         }
@@ -719,7 +726,7 @@ namespace MyTinySTL
     rb_tree<T, Compare>::insert_at_node(typename rb_tree<T, Compare>::base_ptr x,
                    typename rb_tree<T, Compare>::node_ptr v, bool add_to_left) {
         v->parent = x;
-        auto base_node = v.get_base_ptr();
+        auto base_node = v->get_base_ptr();
         if (x == header) {
             root() = base_node;
             leftmost() = base_node;
@@ -790,7 +797,8 @@ namespace MyTinySTL
 
 
     template <class T, class Compare>
-    void rb_tree<T, Compare>::rb_tree_erase_rebalance(base_ptr z, base_ptr &root, base_ptr &leftmost,
+    typename rb_tree<T, Compare>::base_ptr
+    rb_tree<T, Compare>::rb_tree_erase_rebalance(base_ptr z, base_ptr &root, base_ptr &leftmost,
                                                       base_ptr &rightmost) {
         // y 是可能的替换节点，指向最终要删除的节点
         auto y = (z->left == nullptr || z->right == nullptr) ? z : rb_tree_next(z);
@@ -825,7 +833,7 @@ namespace MyTinySTL
             // 连接 y 与 z 的父节点
             if (root == z)
                 root = y;
-            else if (rb_tree_is_lchild(z))
+            else if (z == z->parent->left)
                 z->parent->left = y;
             else
                 z->parent->right = y;
@@ -843,7 +851,7 @@ namespace MyTinySTL
             // 连接 x 与 z 的父节点
             if (root == z)
                 root = x;
-            else if (rb_tree_is_lchild(z))
+            else if (z == z->parent->left)
                 z->parent->left = x;
             else
                 z->parent->right = x;
@@ -874,7 +882,7 @@ namespace MyTinySTL
                     { // case 1
                         rb_tree_set_black(brother);
                         rb_tree_set_red(xp);
-                        rb_tree_rotate_left(xp, root);
+                        _rb_tree_rotate_left(xp, root);
                         brother = xp->right;
                     }
                     // case 1 转为为了 case 2、3、4 中的一种
@@ -892,7 +900,7 @@ namespace MyTinySTL
                             if (brother->left != nullptr)
                                 rb_tree_set_black(brother->left);
                             rb_tree_set_red(brother);
-                            rb_tree_rotate_right(brother, root);
+                            _rb_tree_rotate_right(brother, root);
                             brother = xp->right;
                         }
                         // 转为 case 4
@@ -900,7 +908,7 @@ namespace MyTinySTL
                         rb_tree_set_black(xp);
                         if (brother->right != nullptr)
                             rb_tree_set_black(brother->right);
-                        rb_tree_rotate_left(xp, root);
+                        _rb_tree_rotate_left(xp, root);
                         break;
                     }
                 }
@@ -911,7 +919,7 @@ namespace MyTinySTL
                     { // case 1
                         rb_tree_set_black(brother);
                         rb_tree_set_red(xp);
-                        rb_tree_rotate_right(xp, root);
+                        _rb_tree_rotate_right(xp, root);
                         brother = xp->left;
                     }
                     if ((brother->left == nullptr || !rb_tree_is_red(brother->left)) &&
@@ -928,7 +936,7 @@ namespace MyTinySTL
                             if (brother->right != nullptr)
                                 rb_tree_set_black(brother->right);
                             rb_tree_set_red(brother);
-                            rb_tree_rotate_left(brother, root);
+                            _rb_tree_rotate_left(brother, root);
                             brother = xp->left;
                         }
                         // 转为 case 4
@@ -936,7 +944,7 @@ namespace MyTinySTL
                         rb_tree_set_black(xp);
                         if (brother->left != nullptr)
                             rb_tree_set_black(brother->left);
-                        rb_tree_rotate_right(xp, root);
+                        _rb_tree_rotate_right(xp, root);
                         break;
                     }
                 }
@@ -1115,7 +1123,7 @@ namespace MyTinySTL
     typename rb_tree<T, Compare>::iterator
     rb_tree<T, Compare>::insert_multi_use_pos(iterator pos, key_type &key, node_ptr node) {
         auto x = pos.node;
-        auto next = node;
+        auto next = pos;
         next--;
         auto y = next.node;
         if (!key_compare(key, value_traits::get_key(*next)&&
@@ -1135,7 +1143,7 @@ namespace MyTinySTL
     typename rb_tree<T, Compare>::iterator
     rb_tree<T, Compare>::insert_unique_use_pos(iterator pos, key_type &key, node_ptr node) {
         auto x = pos.node;
-        auto next = node;
+        auto next = pos;
         next--;
         auto y = next.node;
         if (!key_compare(key, value_traits::get_key(*next)&&
@@ -1190,6 +1198,18 @@ namespace MyTinySTL
     }
 
     template <class T, class Compare>
+    typename rb_tree<T, Compare>::base_ptr
+    rb_tree<T, Compare>::rb_tree_next(typename rb_tree<T, Compare>::base_ptr x) {
+        if (x->right != nullptr) {
+            return rb_tree_min(x->right);
+        }
+        while (!(x != x->parent->left)) {
+            x = x->parent;
+        }
+        return x->parent;
+    }
+
+    template <class T, class Compare>
     typename rb_tree<T, Compare>::iterator
     rb_tree<T, Compare>::erase(iterator pos) {
         auto node = static_cast<node_ptr>(pos.node);
@@ -1241,6 +1261,7 @@ namespace MyTinySTL
         auto y = header;
         auto x = root();
         while (x != nullptr) {
+           // std::cout << value_traits::get_key(static_cast<node_ptr>(x)->value) << key << std::endl;
             if (!key_compare(value_traits::get_key(static_cast<node_ptr>(x)->value), key)) {
                 y = x;
                 x = x->left;
@@ -1250,7 +1271,7 @@ namespace MyTinySTL
             }
         }
         iterator v(y);
-        (v == end() || key_comp_(key, value_traits::get_key(*v))) ? end() : v;
+        return (v == end() || key_compare(key, value_traits::get_key(*v))) ? end() : v;
     }
 
     template <class T, class Compare>
@@ -1268,7 +1289,7 @@ namespace MyTinySTL
             }
         }
         iterator v(y);
-        (v == end() || key_comp_(key, value_traits::get_key(*v))) ? end() : v;
+        return (v == end() || key_compare(key, value_traits::get_key(*v))) ? end() : v;
     }
 
     template <class T, class Compare>
@@ -1289,6 +1310,24 @@ namespace MyTinySTL
     }
 
     template <class T, class Compare>
+    typename rb_tree<T, Compare>::const_iterator
+    rb_tree<T, Compare>::lower_bound(const key_type &key) const{
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (!key_compare(value_traits::get_key(static_cast<node_ptr>(x)->value), key)) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        return const_iterator(y);
+    }
+
+
+    template <class T, class Compare>
     typename rb_tree<T, Compare>::iterator
     rb_tree<T, Compare>::upper_bound(const key_type &key) {
         auto y = header;
@@ -1304,4 +1343,23 @@ namespace MyTinySTL
         }
         return iterator(y);
     }
+
+    template <class T, class Compare>
+    typename rb_tree<T, Compare>::const_iterator
+    rb_tree<T, Compare>::upper_bound(const key_type &key) const{
+        auto y = header;
+        auto x = root();
+        while (x != nullptr) {
+            if (key_compare(key, value_traits::get_key(static_cast<node_ptr>(x)->value))) {
+                y = x;
+                x = x->left;
+            }
+            else {
+                x = x->right;
+            }
+        }
+        return const_iterator(y);
+    }
 }
+
+#endif //MYTINYSTL_RB_TREE_H
