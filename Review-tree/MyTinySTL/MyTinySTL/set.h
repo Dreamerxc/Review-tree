@@ -6,7 +6,7 @@
 #define MYTINYSTL_SET_H
 
 #endif //MYTINYSTL_SET_H
-#include "rb_tree.h
+#include "rb_tree.h"
 
 namespace MyTinySTL
 {
@@ -25,18 +25,18 @@ namespace MyTinySTL
 
 
     public:
-        typedef typename base_type::node_type              node_type;
-        typedef typename base_type::pointer                pointer;
-        typedef typename base_type::const_pointer          const_pointer;
-        typedef typename base_type::reference              reference;
-        typedef typename base_type::const_reference        const_reference;
-        typedef typename base_type::iterator               iterator;
-        typedef typename base_type::const_iterator         const_iterator;
-        typedef typename base_type::reverse_iterator       reverse_iterator;
-        typedef typename base_type::const_reverse_iterator const_reverse_iterator;
-        typedef typename base_type::size_type              size_type;
-        typedef typename base_type::difference_type        difference_type;
-        typedef typename base_type::allocator_type         allocator_type;
+        typedef typename set_type::tree_type              tree_type;
+        typedef typename set_type::pointer                pointer;
+        typedef typename set_type::const_pointer          const_pointer;
+        typedef typename set_type::reference              reference;
+        typedef typename set_type::const_reference        const_reference;
+        typedef typename set_type::iterator               iterator;
+        typedef typename set_type::const_iterator         const_iterator;
+        typedef typename set_type::reverse_iterator       reverse_iterator;
+        typedef typename set_type::const_reverse_iterator const_reverse_iterator;
+        typedef typename set_type::size_type              size_type;
+        typedef typename set_type::difference_type        difference_type;
+        typedef typename set_type::allocator_type         allocator_type;
 
     public:
         set() = default;
@@ -104,21 +104,21 @@ namespace MyTinySTL
 
         template <class ...Args>
         std::pair<iterator, bool> emplace(Args&& ...args) {
-            tree_.emplace_unique(MyTinySTL::forward(args)...);
+            return tree_.emplace_unique(MyTinySTL::forward<Args>(args)...);
         }
 
         template <class ...Args>
         iterator emplace_pos(iterator pos, Args&& ...args) {
-            tree_.emplace_unique_at_pos(pos, MyTinySTL::forward(args)...);
+            return tree_.emplace_unique_at_pos(pos, MyTinySTL::forward<Args>(args)...);
         }
 
-        pair<iterator, bool> insert(const value_type& value)
+        std::pair<iterator, bool> insert(const value_type& value)
         {
             return tree_.insert_unique(value);
         }
-        pair<iterator, bool> insert(value_type&& value)
+        std::pair<iterator, bool> insert(value_type&& value)
         {
-            return tree_.insert_unique(mystl::move(value));
+            return tree_.insert_unique(MyTinySTL::move(value));
         }
 
         iterator insert(iterator pos, const value_type& value)
@@ -127,7 +127,7 @@ namespace MyTinySTL
         }
         iterator insert(iterator pos, value_type&& value)
         {
-            return tree_.insert_unique(pos, mystl::move(value));
+            return tree_.insert_unique(pos, MyTinySTL::move(value));
         }
 
         template <class Iter>
@@ -145,8 +145,8 @@ namespace MyTinySTL
         const_iterator find(const key_type& key)        const { return tree_.find(key); }
 
     public:
-        friend bool operator==(const map& lhs, const map& rhs) { return lhs.tree_ == rhs.tree_; }
-        friend bool operator< (const map& lhs, const map& rhs) { return lhs.tree_ <  rhs.tree_; }
+        friend bool operator==(const set& lhs, const set& rhs) { return lhs.tree_ == rhs.tree_; }
+        friend bool operator< (const set& lhs, const set& rhs) { return lhs.tree_ <  rhs.tree_; }
     };
 
     template <class Key, class Compare>

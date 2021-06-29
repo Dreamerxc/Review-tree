@@ -5,6 +5,7 @@ CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/deque.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/map.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/queue.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/rb_tree.h
+CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/set.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../../MyTinySTL/stack.h
 CMakeFiles/stltest.dir/test.cpp.obj: C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/algobase.h
 CMakeFiles/stltest.dir/test.cpp.obj: C:/extralfiles/github/Review-tree/MyTinySTL/MyTinySTL/allocator.h
@@ -22,6 +23,7 @@ CMakeFiles/stltest.dir/test.cpp.obj: ../list_test.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../map_test.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../queue_test.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../rb_tree_test.h
+CMakeFiles/stltest.dir/test.cpp.obj: ../set_test.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../stack_test.h
 CMakeFiles/stltest.dir/test.cpp.obj: ../test.cpp
 CMakeFiles/stltest.dir/test.cpp.obj: ../test.h

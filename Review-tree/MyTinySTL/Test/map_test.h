@@ -19,8 +19,8 @@ namespace MyTinySTL
 
             mp.insert(std::pair<int,int>(1,2));
             mp[3]++;
-            mp[1] = 2;
-            auto it = mp.find(3);
+            mp[4] = 2;
+            auto it = mp.find(4);
             if (it != mp.end()) std::cout <<  it->second << std::endl;
         }
     }

@@ -260,7 +260,7 @@ namespace MyTinySTL
         self operator--(int) {
             self tmp = *this;
             --*this;
-            return *this;
+            return tmp;
         }
 
     };
@@ -488,12 +488,12 @@ namespace MyTinySTL
 
        std::pair<iterator, bool> insert_unique(const value_type& value);
        std::pair<iterator, bool> insert_unique(value_type&& value)
-       { emplace_unique(MyTinySTL::move(value)); }
+       { return emplace_unique(MyTinySTL::move(value)); }
 
        iterator insert_unique(iterator pos, const value_type& value)
-       { emplace_unique_at_pos(pos, value); }
+       { return emplace_unique_at_pos(pos, value); }
        iterator insert_unique(iterator pos, value_type&& value)
-       { emplace_unique_at_pos(pos, MyTinySTL::move(value)); }
+       { return emplace_unique_at_pos(pos, MyTinySTL::move(value)); }
 
        template <class Iter>
        iterator insert_unique(Iter first, Iter last) {

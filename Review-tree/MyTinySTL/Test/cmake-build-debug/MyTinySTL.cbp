@@ -97,6 +97,9 @@
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/rb_tree_test.h">
 			<Option target="stltest"/>
 		</Unit>
+		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/set_test.h">
+			<Option target="stltest"/>
+		</Unit>
 		<Unit filename="C:/extralfiles/github/Review-tree/MyTinySTL/Test/stack_test.h">
 			<Option target="stltest"/>
 		</Unit>
